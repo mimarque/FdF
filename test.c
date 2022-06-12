@@ -123,6 +123,20 @@ int quit(t_data *data, int error)
 	exit(error);
 }
 
+//Returns a linear value in the range [0,1]
+//for sRGB input in [0,255].
+double ChannelInvCompanding(int c)
+{
+	double y;
+
+	c = c & 0xFF;
+	y = c / 255.0;
+    if (c <= 0.04045)
+        y = y / 12.92;
+    else
+        y = pow(((c + 0.055) / 1.055), 2.4);
+    return (y);
+}
 
 //Convert color from 0..255 to 0..1
 //Inverse Srgb Companding for 
@@ -139,19 +153,16 @@ double	*InverseSrgbCompanding(int c)
     return (r);
 }
 
-//Returns a linear value in the range [0,1]
-//for sRGB input in [0,255].
-double ChannelInvCompanding(int c)
+//Apply companding to Red, Green, and Blue
+double ChannelCompanding(double c)
 {
-	double y;
+	double x;
 
-	c = c & 0xFF;
-	c /= 255.0;
-    if (c <= 0.04045)
-        y = c / 12.92;
-    else
-        y = pow(((c + 0.055) / 1.055), 2.4);
-    return (y);
+	if (c <= 0.0031308)
+		x = 12.92 * c; 
+	else
+		x = (1.055 * pow(c, (1/2.4))) - 0.055;
+	return (x);
 }
 
 //return new color. Convert 0..1 back into 0..255
@@ -171,23 +182,12 @@ int SrgbCompanding(double *c)
     return (create_trgb(t, r, g, b));
 }
 
-//Apply companding to Red, Green, and Blue
-double ChannelCompanding(double c)
-{
-	double x;
-
-	if (c <= 0.0031308)
-		x = 12.92 * c; 
-	else
-		x = (1.055 * pow(c, (1/2.4))) - 0.055;
-	return (x);
-}
-
 //sums channels
 //does not include transperancy
 double sumChannels(double *c)
 {
-    return (c[1] + c[2] + c[3]);
+	double x = c[1] + c[2] + c[3];
+    return (x);
 }
 
 //Lerping see
@@ -195,16 +195,20 @@ double sumChannels(double *c)
 //#Programming_language_support
 double lerp_int(double c1, double c2, double t)
 {
-	return ((1 - t) * c1 + t * c2);
+	return (c1 * (1 - t) + c2 * t);
+	//return ((1 - t) * c1 + t * c2);
 }
 
 double	*lerp(double *c1, double *c2, double t)
 {
 	double  *r = malloc(4 * sizeof(double));
 
-	r[1] = ((1 - t) * c1[1] + t * c2[1]);
-    r[2] = ((1 - t) * c1[2] + t * c2[2]);
-    r[3] = ((1 - t) * c1[3] + t * c2[3]);
+	//r[1] = ((1 - t) * c1[1] + t * c2[1]);
+    //r[2] = ((1 - t) * c1[2] + t * c2[2]);
+    //r[3] = ((1 - t) * c1[3] + t * c2[3]);
+	r[1] = c1[1] * (1 - t) + c2[1] * t;
+	r[2] = c1[2] * (1 - t) + c2[2] * t;
+	r[3] = c1[3] * (1 - t) + c2[3] * t;
 	return (r);
 }
 
@@ -213,26 +217,6 @@ void	fix(double *c, double intensity, int total)
     c[1] = (c[1] * intensity / total);
     c[2] = (c[2] * intensity / total);
     c[3] = (c[3] * intensity / total);
-}
-
-int sign(int x)
-{
-	if (x > 0)
-		return (1);
-	else if (x < 0)
-		return (-1);
-	else
-		return (0);
-}
-
-int	calculate_color_step()
-{
-	intensity = pow(lerp_int(bright1, bright2, step), (1 / GAMMA));
-    clr = lerp(color1_lin, color2_lin, step);
-	total = sumChannels(color);
-    if (total != 0)
-		fix(&color, intensity, total);
-   	color = SrgbCompanding(clr);
 }
 
 typedef struct s_bresvars {
@@ -254,16 +238,37 @@ typedef struct s_calcol {
 	double	*color2_lin;
     double	bright2;
 	double	intensity;
-	double	*clr;
-	int color;
-	int step;
-	int total;
+	double	*color;
+	double	step;
+	int		total;
+	int		clr;
 }	t_calcol;
+
+int sign(int x)
+{
+	if (x > 0)
+		return (1);
+	else if (x < 0)
+		return (-1);
+	else
+		return (0);
+}
+
+int	calculate_color_step(t_calcol *c, double step)
+{
+	c->intensity = pow(lerp_int(c->bright1, c->bright2, step), (1 / GAMMA));
+    c->color = lerp(c->color1_lin, c->color2_lin, step);
+	c->total = sumChannels(c->color);
+    if (c->total != 0)
+		fix(c->color, c->intensity, c->total);
+   	return (SrgbCompanding(c->color));
+}
 
 void	bresenhams_alg(int x1, int y1, int x2, int y2, int scolor, int ecolor, t_vars *vars)
 {
 	t_bresvars v;
 	t_calcol c;
+	double step;
 
     c.color1_lin = InverseSrgbCompanding(scolor);
     c.bright1 = pow(sumChannels(c.color1_lin), GAMMA);
@@ -286,12 +291,14 @@ void	bresenhams_alg(int x1, int y1, int x2, int y2, int scolor, int ecolor, t_va
 	}
 
 	v.d = 2*v.dy - v.dx;
-	c.step = 100 / v.dx;
+	c.step = (1.0 / v.dx);
 	v.i = 0;
+	step = 0;
 	while (v.i < v.dx)
 	{
-		c.color = calculate_color_step(c.step);
-		my_mlx_pixel_put(&vars->img, v.x, v.y, c.color); 
+		step = step + 0.2;
+		c.clr = calculate_color_step(&c, step);
+		my_mlx_pixel_put(&vars->img, v.x, v.y, c.clr); 
 		while (v.d >= 0)
 		{ 
 			v.d = v.d - 2 * v.dx;
@@ -314,10 +321,10 @@ void	bresenhams_alg(int x1, int y1, int x2, int y2, int scolor, int ecolor, t_va
 int render(t_vars *vars)
 {
 	if (vars->data.win_ptr != NULL)
-		bresenhams_alg(0, 0, IMG_W, IMG_H, vars);
-		bresenhams_alg(IMG_W, 0, 0, IMG_H, vars);
-		bresenhams_alg(0, IMG_H / 2, IMG_W, IMG_H / 2, vars);
-		bresenhams_alg(IMG_W / 2, 0, IMG_W / 2, IMG_H, vars);
+		bresenhams_alg(0, 0, IMG_W, IMG_H, 0xc3c3c3, 0xd97bd4, vars);
+		bresenhams_alg(IMG_W, 0, 0, IMG_H, 0x0000ff, 0xd97bd4, vars);
+		bresenhams_alg(0, IMG_H / 2, IMG_W, IMG_H / 2, 0xc3c3c3, 0xd97bd4, vars);
+		bresenhams_alg(IMG_W / 2, 0, IMG_W / 2, IMG_H, 0xc3c3c3, 0xd97bd4, vars);
 		mlx_put_image_to_window(vars->data.mlx_ptr, vars->data.win_ptr, vars->img.img, 0, 0);
 	return(0);
 }
