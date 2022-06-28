@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 15:07:04 by mimarque          #+#    #+#             */
-/*   Updated: 2022/06/02 15:55:05 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/06/20 04:47:51 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "libft.h"
 
 /**
  * @brief do while; read file, if file has '\n'
@@ -99,5 +99,6 @@ char	*get_next_line(int fd)
 	}
 	free(line);
 	free(backup[fd]);
+	backup[fd] = NULL;
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/01 17:43:20 by mimarque          #+#    #+#             */
-/*   Updated: 2021/11/24 17:26:48 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/06/23 23:16:03 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ static int	count(char const *s, char c)
 	return (count);
 }
 
-static char	**delete(char **arr)
+//Not static so it can be used to destruct
+//the array after split is used
+char	**ft_delete_split_arr(char **arr)
 {
 	int	i;
 
@@ -76,7 +78,7 @@ char	**ft_split(char const *s, char c)
 			end = getnextc(s, c);
 			arr[j] = ft_substr(s, 0, end);
 			if (!arr[j++])
-				return (delete(arr));
+				return (ft_delete_split_arr(arr));
 			s += end;
 		}
 	}
