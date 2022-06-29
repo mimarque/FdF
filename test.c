@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/29 17:08:24 by mimarque          #+#    #+#             */
+/*   Updated: 2022/06/29 18:49:55 by mimarque         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include <stdio.h>
 #include <math.h>
 #include <libft.h>
@@ -12,9 +25,6 @@
 # define KEYPRESS 2
 # define KEYRELEASE 3
 
-/* Mouse button codes
-** =============================================================================
-*/
 
 # define MB1				1
 # define MB2				3
@@ -35,58 +45,56 @@
 #define BUFFER_SIZE 42
 #define NUM_OF_FD 256
 
-
 /*
 ** # define KEYPRESSMASK (1L<<0)
 ** # define KEYRELEASEMASK (1L<<1)
 */
 /* MacRoman character codes*/
 enum {
-  kNullCharCode                 = 0,
-  kHomeCharCode                 = 1,
-  kEnterCharCode                = 3,
-  kEndCharCode                  = 4,
-  kHelpCharCode                 = 5,
-  kBellCharCode                 = 7,
-  kBackspaceCharCode            = 8,
-  kTabCharCode                  = 9,
-  kLineFeedCharCode             = 10,
-  kVerticalTabCharCode          = 11,
-  kPageUpCharCode               = 11,
-  kFormFeedCharCode             = 12,
-  kPageDownCharCode             = 12,
-  kReturnCharCode               = 13,
-  kFunctionKeyCharCode          = 16,
-  kCommandCharCode              = 17,   /* glyph available only in system fonts*/
-  kCheckCharCode                = 18,   /* glyph available only in system fonts*/
-  kDiamondCharCode              = 19,   /* glyph available only in system fonts*/
-  kAppleLogoCharCode            = 20,   /* glyph available only in system fonts*/
-  kEscapeCharCode               = 27,
-  kClearCharCode                = 27,
-  kLeftArrowCharCode            = 28,
-  kRightArrowCharCode           = 29,
-  kUpArrowCharCode              = 30,
-  kDownArrowCharCode            = 31,
-  kSpaceCharCode                = 32,
-  kDeleteCharCode               = 127,
-  kBulletCharCode               = 165,
-  kNonBreakingSpaceCharCode     = 202
+	kNullCharCode					= 0,
+	kHomeCharCode					= 1,
+	kEnterCharCode					= 3,
+	kEndCharCode					= 4,
+	kHelpCharCode					= 5,
+	kBellCharCode					= 7,
+	kBackspaceCharCode				= 8,
+	kTabCharCode					= 9,
+	kLineFeedCharCode				= 10,
+	kVerticalTabCharCode			= 11,
+	kPageUpCharCode					= 11,
+	kFormFeedCharCode				= 12,
+	kPageDownCharCode				= 12,
+	kReturnCharCode					= 13,
+	kFunctionKeyCharCode			= 16,
+	kCommandCharCode				= 17,
+	kCheckCharCode					= 18,
+	kDiamondCharCode				= 19,
+	kAppleLogoCharCode				= 20,
+	kEscapeCharCode					= 27,
+	kClearCharCode					= 27,
+	kLeftArrowCharCode				= 28,
+	kRightArrowCharCode				= 29,
+	kUpArrowCharCode				= 30,
+	kDownArrowCharCode				= 31,
+	kSpaceCharCode					= 32,
+	kDeleteCharCode					= 127,
+	kBulletCharCode					= 165,
+	kNonBreakingSpaceCharCode		= 202
 };
 
 /* useful Unicode code points*/
 enum {
-  kShiftUnicode                 = 0x21E7, /* Unicode UPWARDS WHITE ARROW*/
-  kControlUnicode               = 0x2303, /* Unicode UP ARROWHEAD*/
-  kOptionUnicode                = 0x2325, /* Unicode OPTION KEY*/
-  kCommandUnicode               = 0x2318, /* Unicode PLACE OF INTEREST SIGN*/
-  kPencilUnicode                = 0x270E, /* Unicode LOWER RIGHT PENCIL; actually pointed left until Mac OS X 10.3*/
-  kPencilLeftUnicode            = 0xF802, /* Unicode LOWER LEFT PENCIL; available in Mac OS X 10.3 and later*/
-  kCheckUnicode                 = 0x2713, /* Unicode CHECK MARK*/
-  kDiamondUnicode               = 0x25C6, /* Unicode BLACK DIAMOND*/
-  kBulletUnicode                = 0x2022, /* Unicode BULLET*/
-  kAppleLogoUnicode             = 0xF8FF /* Unicode APPLE LOGO*/
+	kShiftUnicode					= 0x21E7,
+	kControlUnicode					= 0x2303,
+	kOptionUnicode					= 0x2325,
+	kCommandUnicode					= 0x2318,
+	kPencilUnicode					= 0x270E,
+	kPencilLeftUnicode				= 0xF802,
+	kCheckUnicode					= 0x2713,
+	kDiamondUnicode					= 0x25C6,
+	kBulletUnicode					= 0x2022,
+	kAppleLogoUnicode				= 0xF8FF
 };
-
 
 /*
  *  Summary:
@@ -104,138 +112,137 @@ enum {
  *    keycode.
  */
 enum {
-  kVK_ANSI_A                    = 0x00,
-  kVK_ANSI_S                    = 0x01,
-  kVK_ANSI_D                    = 0x02,
-  kVK_ANSI_F                    = 0x03,
-  kVK_ANSI_H                    = 0x04,
-  kVK_ANSI_G                    = 0x05,
-  kVK_ANSI_Z                    = 0x06,
-  kVK_ANSI_X                    = 0x07,
-  kVK_ANSI_C                    = 0x08,
-  kVK_ANSI_V                    = 0x09,
-  kVK_ANSI_B                    = 0x0B,
-  kVK_ANSI_Q                    = 0x0C,
-  kVK_ANSI_W                    = 0x0D,
-  kVK_ANSI_E                    = 0x0E,
-  kVK_ANSI_R                    = 0x0F,
-  kVK_ANSI_Y                    = 0x10,
-  kVK_ANSI_T                    = 0x11,
-  kVK_ANSI_1                    = 0x12,
-  kVK_ANSI_2                    = 0x13,
-  kVK_ANSI_3                    = 0x14,
-  kVK_ANSI_4                    = 0x15,
-  kVK_ANSI_6                    = 0x16,
-  kVK_ANSI_5                    = 0x17,
-  kVK_ANSI_Equal                = 0x18,
-  kVK_ANSI_9                    = 0x19,
-  kVK_ANSI_7                    = 0x1A,
-  kVK_ANSI_Minus                = 0x1B,
-  kVK_ANSI_8                    = 0x1C,
-  kVK_ANSI_0                    = 0x1D,
-  kVK_ANSI_RightBracket         = 0x1E,
-  kVK_ANSI_O                    = 0x1F,
-  kVK_ANSI_U                    = 0x20,
-  kVK_ANSI_LeftBracket          = 0x21,
-  kVK_ANSI_I                    = 0x22,
-  kVK_ANSI_P                    = 0x23,
-  kVK_ANSI_L                    = 0x25,
-  kVK_ANSI_J                    = 0x26,
-  kVK_ANSI_Quote                = 0x27,
-  kVK_ANSI_K                    = 0x28,
-  kVK_ANSI_Semicolon            = 0x29,
-  kVK_ANSI_Backslash            = 0x2A,
-  kVK_ANSI_Comma                = 0x2B,
-  kVK_ANSI_Slash                = 0x2C,
-  kVK_ANSI_N                    = 0x2D,
-  kVK_ANSI_M                    = 0x2E,
-  kVK_ANSI_Period               = 0x2F,
-  kVK_ANSI_Grave                = 0x32,
-  kVK_ANSI_KeypadDecimal        = 0x41,
-  kVK_ANSI_KeypadMultiply       = 0x43,
-  kVK_ANSI_KeypadPlus           = 0x45,
-  kVK_ANSI_KeypadClear          = 0x47,
-  kVK_ANSI_KeypadDivide         = 0x4B,
-  kVK_ANSI_KeypadEnter          = 0x4C,
-  kVK_ANSI_KeypadMinus          = 0x4E,
-  kVK_ANSI_KeypadEquals         = 0x51,
-  kVK_ANSI_Keypad0              = 0x52,
-  kVK_ANSI_Keypad1              = 0x53,
-  kVK_ANSI_Keypad2              = 0x54,
-  kVK_ANSI_Keypad3              = 0x55,
-  kVK_ANSI_Keypad4              = 0x56,
-  kVK_ANSI_Keypad5              = 0x57,
-  kVK_ANSI_Keypad6              = 0x58,
-  kVK_ANSI_Keypad7              = 0x59,
-  kVK_ANSI_Keypad8              = 0x5B,
-  kVK_ANSI_Keypad9              = 0x5C
+	kVK_ANSI_A						= 0x00,
+	kVK_ANSI_S						= 0x01,
+	kVK_ANSI_D						= 0x02,
+	kVK_ANSI_F						= 0x03,
+	kVK_ANSI_H						= 0x04,
+	kVK_ANSI_G						= 0x05,
+	kVK_ANSI_Z						= 0x06,
+	kVK_ANSI_X						= 0x07,
+	kVK_ANSI_C						= 0x08,
+	kVK_ANSI_V						= 0x09,
+	kVK_ANSI_B						= 0x0B,
+	kVK_ANSI_Q						= 0x0C,
+	kVK_ANSI_W						= 0x0D,
+	kVK_ANSI_E						= 0x0E,
+	kVK_ANSI_R						= 0x0F,
+	kVK_ANSI_Y						= 0x10,
+	kVK_ANSI_T						= 0x11,
+	kVK_ANSI_1						= 0x12,
+	kVK_ANSI_2						= 0x13,
+	kVK_ANSI_3						= 0x14,
+	kVK_ANSI_4						= 0x15,
+	kVK_ANSI_6						= 0x16,
+	kVK_ANSI_5						= 0x17,
+	kVK_ANSI_Equal					= 0x18,
+	kVK_ANSI_9						= 0x19,
+	kVK_ANSI_7						= 0x1A,
+	kVK_ANSI_Minus					= 0x1B,
+	kVK_ANSI_8						= 0x1C,
+	kVK_ANSI_0						= 0x1D,
+	kVK_ANSI_RightBracket			= 0x1E,
+	kVK_ANSI_O						= 0x1F,
+	kVK_ANSI_U						= 0x20,
+	kVK_ANSI_LeftBracket			= 0x21,
+	kVK_ANSI_I						= 0x22,
+	kVK_ANSI_P						= 0x23,
+	kVK_ANSI_L						= 0x25,
+	kVK_ANSI_J						= 0x26,
+	kVK_ANSI_Quote					= 0x27,
+	kVK_ANSI_K						= 0x28,
+	kVK_ANSI_Semicolon				= 0x29,
+	kVK_ANSI_Backslash				= 0x2A,
+	kVK_ANSI_Comma					= 0x2B,
+	kVK_ANSI_Slash					= 0x2C,
+	kVK_ANSI_N						= 0x2D,
+	kVK_ANSI_M						= 0x2E,
+	kVK_ANSI_Period					= 0x2F,
+	kVK_ANSI_Grave					= 0x32,
+	kVK_ANSI_KeypadDecimal			= 0x41,
+	kVK_ANSI_KeypadMultiply			= 0x43,
+	kVK_ANSI_KeypadPlus				= 0x45,
+	kVK_ANSI_KeypadClear			= 0x47,
+	kVK_ANSI_KeypadDivide			= 0x4B,
+	kVK_ANSI_KeypadEnter			= 0x4C,
+	kVK_ANSI_KeypadMinus			= 0x4E,
+	kVK_ANSI_KeypadEquals			= 0x51,
+	kVK_ANSI_Keypad0				= 0x52,
+	kVK_ANSI_Keypad1				= 0x53,
+	kVK_ANSI_Keypad2				= 0x54,
+	kVK_ANSI_Keypad3				= 0x55,
+	kVK_ANSI_Keypad4				= 0x56,
+	kVK_ANSI_Keypad5				= 0x57,
+	kVK_ANSI_Keypad6				= 0x58,
+	kVK_ANSI_Keypad7				= 0x59,
+	kVK_ANSI_Keypad8				= 0x5B,
+	kVK_ANSI_Keypad9				= 0x5C
 };
 
 /* keycodes for keys that are independent of keyboard layout*/
 enum {
-  kVK_Return                    = 0x24,
-  kVK_Tab                       = 0x30,
-  kVK_Space                     = 0x31,
-  kVK_Delete                    = 0x33,
-  kVK_Escape                    = 0x35,
-  kVK_Command                   = 0x37,
-  kVK_Shift                     = 0x38,
-  kVK_CapsLock                  = 0x39,
-  kVK_Option                    = 0x3A,
-  kVK_Control                   = 0x3B,
-  kVK_RightShift                = 0x3C,
-  kVK_RightOption               = 0x3D,
-  kVK_RightControl              = 0x3E,
-  kVK_Function                  = 0x3F,
-  kVK_F17                       = 0x40,
-  kVK_VolumeUp                  = 0x48,
-  kVK_VolumeDown                = 0x49,
-  kVK_Mute                      = 0x4A,
-  kVK_F18                       = 0x4F,
-  kVK_F19                       = 0x50,
-  kVK_F20                       = 0x5A,
-  kVK_F5                        = 0x60,
-  kVK_F6                        = 0x61,
-  kVK_F7                        = 0x62,
-  kVK_F3                        = 0x63,
-  kVK_F8                        = 0x64,
-  kVK_F9                        = 0x65,
-  kVK_F11                       = 0x67,
-  kVK_F13                       = 0x69,
-  kVK_F16                       = 0x6A,
-  kVK_F14                       = 0x6B,
-  kVK_F10                       = 0x6D,
-  kVK_F12                       = 0x6F,
-  kVK_F15                       = 0x71,
-  kVK_Help                      = 0x72,
-  kVK_Home                      = 0x73,
-  kVK_PageUp                    = 0x74,
-  kVK_ForwardDelete             = 0x75,
-  kVK_F4                        = 0x76,
-  kVK_End                       = 0x77,
-  kVK_F2                        = 0x78,
-  kVK_PageDown                  = 0x79,
-  kVK_F1                        = 0x7A,
-  kVK_LeftArrow                 = 0x7B,
-  kVK_RightArrow                = 0x7C,
-  kVK_DownArrow                 = 0x7D,
-  kVK_UpArrow                   = 0x7E
+	kVK_Return						= 0x24,
+	kVK_Tab							= 0x30,
+	kVK_Space						= 0x31,
+	kVK_Delete						= 0x33,
+	kVK_Escape						= 0x35,
+	kVK_Command						= 0x37,
+	kVK_Shift						= 0x38,
+	kVK_CapsLock					= 0x39,
+	kVK_Option						= 0x3A,
+	kVK_Control						= 0x3B,
+	kVK_RightShift					= 0x3C,
+	kVK_RightOption					= 0x3D,
+	kVK_RightControl				= 0x3E,
+	kVK_Function					= 0x3F,
+	kVK_F17							= 0x40,
+	kVK_VolumeUp					= 0x48,
+	kVK_VolumeDown					= 0x49,
+	kVK_Mute						= 0x4A,
+	kVK_F18							= 0x4F,
+	kVK_F19							= 0x50,
+	kVK_F20							= 0x5A,
+	kVK_F5							= 0x60,
+	kVK_F6							= 0x61,
+	kVK_F7							= 0x62,
+	kVK_F3							= 0x63,
+	kVK_F8							= 0x64,
+	kVK_F9							= 0x65,
+	kVK_F11							= 0x67,
+	kVK_F13							= 0x69,
+	kVK_F16							= 0x6A,
+	kVK_F14							= 0x6B,
+	kVK_F10							= 0x6D,
+	kVK_F12							= 0x6F,
+	kVK_F15							= 0x71,
+	kVK_Help						= 0x72,
+	kVK_Home						= 0x73,
+	kVK_PageUp						= 0x74,
+	kVK_ForwardDelete				= 0x75,
+	kVK_F4							= 0x76,
+	kVK_End							= 0x77,
+	kVK_F2							= 0x78,
+	kVK_PageDown					= 0x79,
+	kVK_F1							= 0x7A,
+	kVK_LeftArrow					= 0x7B,
+	kVK_RightArrow					= 0x7C,
+	kVK_DownArrow					= 0x7D,
+	kVK_UpArrow						= 0x7E
 };
 
 /* ISO keyboards only*/
 enum {
-  kVK_ISO_Section               = 0x0A
+	kVK_ISO_Section					= 0x0A
 };
 
 /* JIS keyboards only*/
 enum {
-  kVK_JIS_Yen                   = 0x5D,
-  kVK_JIS_Underscore            = 0x5E,
-  kVK_JIS_KeypadComma           = 0x5F,
-  kVK_JIS_Eisu                  = 0x66,
-  kVK_JIS_Kana                  = 0x68
+	kVK_JIS_Yen						= 0x5D,
+	kVK_JIS_Underscore				= 0x5E,
+	kVK_JIS_KeypadComma				= 0x5F,
+	kVK_JIS_Eisu					= 0x66,
+	kVK_JIS_Kana					= 0x68
 };
-
 
 typedef struct s_img {
 	void	*img;
@@ -250,18 +257,17 @@ typedef struct s_data {
 	void	*win_ptr;
 }	t_data;
 
-
 typedef struct s_bresvars {
-	int x; 
-	int y;
-	int dx; 
-	int dy;
-	int s1; 
-	int s2;
-	int swap;
-	int temp;
-	int d;
-	int i;
+	int	x;
+	int	y;
+	int	dx;
+	int	dy;
+	int	s1;
+	int	s2;
+	int	swap;
+	int	temp;
+	int	d;
+	int	i;
 }	t_bresvars;
 
 typedef struct s_calcol {
@@ -290,7 +296,7 @@ typedef struct s_pmatrix
 	float	m[4][4];
 }	t_pmatrix;
 
-typedef struct s_coord 
+typedef struct s_coord
 {
 	int	x;
 	int	y;
@@ -305,6 +311,7 @@ typedef struct s_allvars
 	t_coord		*c;
 	t_pmatrix	pm;
 	t_pmatrix	wc;
+	t_pmatrix	tw;
 	float		fov;
 	float		f;
 	float		n;
@@ -321,6 +328,7 @@ typedef struct s_allvars
 }	t_allvars;
 
 void	multiply_matrix_vector(t_point *i, t_point *o, t_pmatrix *m);
+void	transform_matrix_vector(t_point *i, t_pmatrix *m);
 
 //since mlx_pixel_put works slowly but fast enough to cause tearing
 //we make our own function to put data in the image unidimetional array
@@ -331,7 +339,7 @@ void	multiply_matrix_vector(t_point *i, t_point *o, t_pmatrix *m);
 //little endian, LSB is the leftmost bit
 void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 {
-	char    *pixel;
+	char	*pixel;
 	int		i;
 
 	if (x < IMG_W && y < IMG_H && x > 0 && y > 0)
@@ -356,7 +364,7 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 //		int b = 00000000 00000000 000000000 000000bb
 //		t<<24 = aaaaaaaa 00000000 000000000 00000000
 //		r<<16 = 00000000 00rrrrrr 000000000 00000000
-//      g<<8  = 00000000 00000000 ggggggggg 00000000
+//	  g<<8  = 00000000 00000000 ggggggggg 00000000
 //	  t|r|g|b = aaaaaaaa 00rrrrrr ggggggggg 000000bb
 //
 //the x = x & 0xFF; caps x value to a max of 255 so it doesnt overflow
@@ -388,8 +396,6 @@ int	get_b(int trgb)
 	return (trgb & 0xFF);
 }
 
-
-
 /**
  * @brief Closes window and frees memory
  * 
@@ -406,8 +412,32 @@ int quit(t_allvars *a, int error)
 		ft_printf("Error opening file");
 	else if (error == 3)
 		ft_printf("Error file improperly formated");
-	else if (error >= 4 || error == 0)
+	else if (error == 4)
+		ft_printf("Error allocating memory");
+	else if (error == 5)
 	{
+		free(a->i);
+		ft_printf("Error allocating memory");
+	}
+	else if (error == 6)
+	{
+		free(a->i);
+		free(a->bt);
+		ft_printf("Error allocating memory");
+	}
+	else if (error == 7)
+	{
+		free(a->i);
+		free(a->bt);
+		free(a->o);
+		ft_printf("Error allocating memory");
+	}
+	else if (error >= 7 || error == 0)
+	{
+		free(a->i);
+		free(a->bt);
+		free(a->o);
+		free(a->c);
 		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
 		free(a->data.mlx_ptr);
 	}
@@ -433,7 +463,7 @@ int	keypress(int keysym, t_allvars *a)
 //for sRGB input in [0,255].
 float ChannelInvCompanding(int c)
 {
-	float y;
+	float	y;
 
 	c = c & 0xFF;
 	y = (float) c;
@@ -450,25 +480,25 @@ float ChannelInvCompanding(int c)
 //Red, Green, and Blue
 float	*InverseSrgbCompanding(int c)
 {
-	float  *r = malloc(4 * sizeof(float));
+	float	*r;
 
+	r = malloc(4 * sizeof(float));
 	r[0] = (float) get_t(c);
 	r[1] = ChannelInvCompanding(get_r(c));
 	r[2] = ChannelInvCompanding(get_g(c));
 	r[3] = ChannelInvCompanding(get_b(c));
-
 	return (r);
 }
 
 //Apply companding to Red, Green, and Blue
 float ChannelCompanding(float c)
 {
-	float x;
+	float	x;
 
 	if (c <= 0.0031308)
-		x = 12.92 * c; 
+		x = 12.92 * c;
 	else
-		x = (1.055 * pow(c, (1/2.4))) - 0.055;
+		x = (1.055 * pow(c, (1 / 2.4))) - 0.055;
 	return (x);
 }
 
@@ -476,7 +506,7 @@ float ChannelCompanding(float c)
 //Srgb Companding for Red, Green, and Blue
 int SrgbCompanding(float *c)
 {
-	int t;
+	int	t;
 	int	r;
 	int	g;
 	int	b;
@@ -493,7 +523,9 @@ int SrgbCompanding(float *c)
 //does not include transperancy
 float sumChannels(float *c)
 {
-	float x = c[1] + c[2] + c[3];
+	float	x;
+
+	x = c[1] + c[2] + c[3];
 	return (x);
 }
 
@@ -507,11 +539,9 @@ float lerp_int(float c1, float c2, float t)
 
 float	*lerp(float *c1, float *c2, float t)
 {
-	float  *r = malloc(4 * sizeof(float));
+	float	*r;
 
-	//r[1] = ((1 - t) * c1[1] + t * c2[1]);
-	//r[2] = ((1 - t) * c1[2] + t * c2[2]);
-	//r[3] = ((1 - t) * c1[3] + t * c2[3]);
+	r = malloc(4 * sizeof(float));
 	r[1] = (c1[1] * (1 - t)) + c2[1] * t;
 	r[2] = (c1[2] * (1 - t)) + c2[2] * t;
 	r[3] = (c1[3] * (1 - t)) + c2[3] * t;
@@ -542,7 +572,7 @@ int	calculate_color_step(t_calcol *c, float step)
 	c->total = sumChannels(c->color);
 	if (c->total != 0)
 		fix(c->color, c->intensity, c->total);
-   	return (SrgbCompanding(c->color));
+	return (SrgbCompanding(c->color));
 }
 
 void 	inverse(t_calcol *c, int scolor, int ecolor)
@@ -555,14 +585,15 @@ void 	inverse(t_calcol *c, int scolor, int ecolor)
 
 void	init_bresenhams(t_bresvars *v, int x1, int y1, int x2, int y2)
 {
-	v->x = x1; 
+	v->x = x1;
 	v->y = y1;
-	v->dx = abs(x2 - x1); 
+	v->dx = abs(x2 - x1);
 	v->dy = abs(y2 - y1);
-	v->s1 = sign(x2 - x1); 
+	v->s1 = sign(x2 - x1);
 	v->s2 = sign(y2 - y1);
 	v->swap = 0;
-	if (v->dy > v->dx) {
+	if (v->dy > v->dx)
+	{
 		v->temp = v->dx;
 		v->dx = v->dy;
 		v->dy = v->temp;
@@ -572,7 +603,7 @@ void	init_bresenhams(t_bresvars *v, int x1, int y1, int x2, int y2)
 
 void	bresenhams_cycle(t_bresvars *v, t_calcol *c, t_allvars *a)
 {
-	v->d = 2*v->dy - v->dx;
+	v->d = 2 * v->dy - v->dx;
 	c->step_v = (1.0 / v->dx);
 	v->i = 0;
 	c->step = 0;
@@ -580,15 +611,15 @@ void	bresenhams_cycle(t_bresvars *v, t_calcol *c, t_allvars *a)
 	{
 		c->step += c->step_v;
 		c->clr = calculate_color_step(c, c->step);
-		my_mlx_pixel_put(&a->img, v->x, v->y, c->clr); 
+		my_mlx_pixel_put(&a->img, v->x, v->y, c->clr);
 		while (v->d >= 0)
-		{ 
+		{
 			v->d = v->d - 2 * v->dx;
 			if (v->swap)
 				v->x += v->s1;
 			else
 				v->y += v->s2;
-		} 
+		}
 		v->d = v->d + 2 * v->dy;
 		if (v->swap)
 			v->y += v->s2;
@@ -598,77 +629,56 @@ void	bresenhams_cycle(t_bresvars *v, t_calcol *c, t_allvars *a)
 	}
 }
 
-void	bresenhams_alg(int x1, int y1, int x2, int y2, int scolor, int ecolor, t_allvars *a)
+void	bresenhams_alg(t_coord *start, t_coord *end, t_allvars *a)
 {
-	t_bresvars v;
-	t_calcol c;
+	t_bresvars	v;
+	t_calcol	c;
 
-	inverse(&c, scolor, ecolor);
-	init_bresenhams(&v, x1, y1, x2, y2);
+	inverse(&c, start->c, end->c);
+	init_bresenhams(&v, start->x, start->y, end->x, end->y);
 	bresenhams_cycle(&v, &c, a);
 	free(c.color1_lin);
 	free(c.color2_lin);
 }
 
-/*
-	int px;
-				int py;
-				int	pz;
-				int y;
-				int x;
-				float angle;
-
-				angle = 30 * (M_PI / 180);
-				px = a->i[k * a->tx + l].x;
-				py = a->i[k * a->tx + l].y;
-				pz = a->i[k * a->tx + l].z;
-				x = (px - py) * cos(angle);
-				y = (px + py) * sin(angle) - pz;
-				a->c[k * a->tx + l].x = x;
-				a->c[k * a->tx + l].y = y;
-				a->c[k * a->tx + l].c = a->i[k * a->tx + l].c;
-*/
-
-int render(t_allvars *a)
+void	make_matrix(t_allvars *a)
 {
-	int xp;
-	int yp;
+	int	xp;
+	int	yp;
 
-	if (a->data.win_ptr != NULL)
-		for (int k = 0; k < a->ty; k++)
+	for (int k = 0; k < a->ty; k++)
+	{
+		for (int l = 0; l < a->tx; l++)
 		{
-			for (int l = 0; l < a->tx; l++)
-			{
-				multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
-				multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
-				if (a->o[k * a->tx + l].x < -1 || a->o[k * a->tx + l].x > 1 || a->o[k * a->tx + l].y < -1 || a->o[k * a->tx + l].y > 1) 
-					continue;
-				xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W); 
-				yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
-				a->c[k * a->tx + l].x = xp;
-				a->c[k * a->tx + l].y = yp;
-				a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
-			
-				my_mlx_pixel_put(a->img.img, xp, yp, a->i[k * a->tx + l].c);
-			}
+			multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
+			transform_matrix_vector(&a->bt[k * a->tx + l], &a->tw);
+			multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+			xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W); 
+			yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
+			a->c[k * a->tx + l].x = xp;
+			a->c[k * a->tx + l].y = yp;
+			a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
 		}
+	}
+}
+
+int	render(t_allvars *a)
+{
+	if (a->data.win_ptr != NULL)
+	{
 		for (int k = 0; k < a->ty; k++)
 		{
 			for (int l = 0; l < a->tx; l++)
 			{
-				if(l < a->tx - 1)
-				{
-					bresenhams_alg(a->c[k * a->tx + l].x, a->c[k * a->tx + l].y, a->c[k * a->tx + l + 1].x, a->c[k * a->tx + l + 1].y, a->c[k * a->tx + l].c, a->c[k * a->tx + l + 1].c, a);
-				}
+				if (l < a->tx - 1)
+					bresenhams_alg(&a->c[k * a->tx + l], &a->c[k * a->tx + l + 1], a);
 				if (k < a->ty -1)
-				{
-					bresenhams_alg(a->c[k * a->tx + l].x, a->c[k * a->tx + l].y, a->c[(k + 1 )* a->tx + l].x, a->c[(k + 1 )* a->tx + l].y, a->c[k * a->tx + l].c, a->c[(k + 1 )* a->tx + l].c, a);
-				}
+					bresenhams_alg(&a->c[k * a->tx + l], &a->c[(k + 1 )* a->tx + l], a);
 			}
 		}
 		mlx_put_image_to_window(a->data.mlx_ptr, a->data.win_ptr, a->img.img, 0, 0);
-		//mlx_put_image_to_window(vars->data.mlx_ptr, vars->data.win_ptr, vars->img.img, 0, 0);
-	return(0);
+	}	
+	return (0);
 }
 
 void	delete_arr_arr(char **arr)
@@ -714,60 +724,80 @@ void	check_items_inline(t_allvars *a, char *line, char **arr, int *j)
 	}
 }
 
+void	set_transform(t_allvars *a)
+{
+	a->tw.m[0][0] = 1;
+	a->tw.m[0][1] = 0;
+	a->tw.m[0][2] = 0;
+	a->tw.m[0][3] = 0;
+	a->tw.m[1][0] = 0;
+	a->tw.m[1][1] = 1;
+	a->tw.m[1][2] = 0;
+	a->tw.m[1][3] = 0;
+	a->tw.m[2][0] = 0;
+	a->tw.m[2][1] = 0;
+	a->tw.m[2][2] = 1;
+	a->tw.m[2][3] = 0;
+	a->tw.m[3][0] = 0;
+	a->tw.m[3][1] = -((a->b) / 2);
+	a->tw.m[3][2] = 0;
+	a->tw.m[3][3] = 1;
+}
 
 //a = Rotation on z
 //b = Rotation on y
 //g = Rotation on x
 void	set_world_matrix_iso_transform(t_pmatrix *wc)
 {
-	float a = -45.0 * (M_PI / 180.0);
-	float b = 0.0 * (M_PI / 180.0);
-	float g = (180 + 35.264) * (M_PI / 180.0);
-	wc->m[0][0] = cos(a) * cos(b); 
-    wc->m[0][1] = cos(a) * sin(b) * sin(g) - sin(a) * cos(g); 
-    wc->m[0][2] = cos(a) * sin(b) * cos(g) + sin(a) * sin(g); 
-    wc->m[0][3] = 0; 
-    wc->m[1][0] = sin(a) * cos(b); 
-    wc->m[1][1] = sin(a) * sin(b) * sin(g) + cos(a) * cos(g); 
-    wc->m[1][2] = sin(a) * sin(b) * cos(g) - cos(a) * sin(g); 
-    wc->m[1][3] = 0; 
-    wc->m[2][0] = -sin(b); 
-    wc->m[2][1] = cos(b) * sin(g); 
-    wc->m[2][2] = cos(b) * cos(g); 
-    wc->m[2][3] = 0; 
-    wc->m[3][0] = 0; 
-    wc->m[3][1] = 0; 
-    wc->m[3][2] = 0; 
-    wc->m[3][3] = 1; 
+	float	a;
+	float	b;
+	float	g;
+
+	a = -45.0 * (M_PI / 180.0);
+	b = 0.0 * (M_PI / 180.0);
+	g = (180 + 35.264) * (M_PI / 180.0);
+	wc->m[0][0] = cos(a) * cos(b);
+	wc->m[0][1] = cos(a) * sin(b) * sin(g) - sin(a) * cos(g);
+	wc->m[0][2] = cos(a) * sin(b) * cos(g) + sin(a) * sin(g);
+	wc->m[0][3] = 0;
+	wc->m[1][0] = sin(a) * cos(b);
+	wc->m[1][1] = sin(a) * sin(b) * sin(g) + cos(a) * cos(g);
+	wc->m[1][2] = sin(a) * sin(b) * cos(g) - cos(a) * sin(g);
+	wc->m[1][3] = 0;
+	wc->m[2][0] = -sin(b);
+	wc->m[2][1] = cos(b) * sin(g);
+	wc->m[2][2] = cos(b) * cos(g);
+	wc->m[2][3] = 0;
+	wc->m[3][0] = 0;
+	wc->m[3][1] = 0;
+	wc->m[3][2] = 0;
+	wc->m[3][3] = 1;
 }
-
-
 
 void	set_world_matrix(t_pmatrix *wc)
 {
-	wc->m[0][0] = 1; 
-    wc->m[0][1] = 0; 
-    wc->m[0][2] = 0; 
-    wc->m[0][3] = 0; 
-    wc->m[1][0] = 0; 
-    wc->m[1][1] = 1; 
-    wc->m[1][2] = 0; 
-    wc->m[1][3] = 0; 
-    wc->m[2][0] = 0; 
-    wc->m[2][1] = 0; 
-    wc->m[2][2] = 1; 
-    wc->m[2][3] = 0; 
-    wc->m[3][0] = 0; 
-    wc->m[3][1] = 0; 
-    wc->m[3][2] = 0; 
-    wc->m[3][3] = 1; 
+	wc->m[0][0] = 1;
+	wc->m[0][1] = 0;
+	wc->m[0][2] = 0;
+	wc->m[0][3] = 0;
+	wc->m[1][0] = 0;
+	wc->m[1][1] = 1;
+	wc->m[1][2] = 0;
+	wc->m[1][3] = 0;
+	wc->m[2][0] = 0;
+	wc->m[2][1] = 0;
+	wc->m[2][2] = 1;
+	wc->m[2][3] = 0;
+	wc->m[3][0] = 0;
+	wc->m[3][1] = 0;
+	wc->m[3][2] = 0;
+	wc->m[3][3] = 1;
 }
-
 
 void	set_projection_matrix(t_pmatrix *pm, float n, float f, float fov)
 {
-	float scale;
-	
+	float	scale;
+
 	scale = 1.0 / tan(fov * 0.5 * M_PI / 180.0);
 	pm->m[0][0] = scale;
 	pm->m[1][1] = scale;
@@ -779,23 +809,23 @@ void	set_projection_matrix(t_pmatrix *pm, float n, float f, float fov)
 
 void	set_ortog_matrix(t_pmatrix *pm, t_allvars *a)
 {
-    pm->m[0][0] = 2.0 / (a->r - a->l); 
-    pm->m[0][1] = 0; 
-    pm->m[0][2] = 0; 
-    pm->m[0][3] = 0; 
-    pm->m[1][0] = 0; 
-    pm->m[1][1] = 2.0 / (a->t - a->b); 
-    pm->m[1][2] = 0; 
-    pm->m[1][3] = 0; 
-    pm->m[2][0] = 0; 
-    pm->m[2][1] = 0; 
-    pm->m[2][2] = -2.0 / (a->f - a->n); 
-    pm->m[2][3] = 0; 
-    pm->m[3][0] = -(a->r + a->l) / (a->r - a->l); 
-    pm->m[3][1] = -(a->t + a->b) / (a->t - a->b); 
-    pm->m[3][2] = -(a->f + a->n) / (a->f - a->n); 
-    pm->m[3][3] = 1; 
-} 
+	pm->m[0][0] = 2.0 / (a->r - a->l);
+	pm->m[0][1] = 0;
+	pm->m[0][2] = 0;
+	pm->m[0][3] = 0;
+	pm->m[1][0] = 0;
+	pm->m[1][1] = 2.0 / (a->t - a->b);
+	pm->m[1][2] = 0;
+	pm->m[1][3] = 0;
+	pm->m[2][0] = 0;
+	pm->m[2][1] = 0;
+	pm->m[2][2] = -2.0 / (a->f - a->n);
+	pm->m[2][3] = 0;
+	pm->m[3][0] = -(a->r + a->l) / (a->r - a->l);
+	pm->m[3][1] = -(a->t + a->b) / (a->t - a->b);
+	pm->m[3][2] = -(a->f + a->n) / (a->f - a->n);
+	pm->m[3][3] = 1;
+}
 
 /**
  * @brief 
@@ -806,19 +836,50 @@ void	set_ortog_matrix(t_pmatrix *pm, t_allvars *a)
  */
 void	multiply_matrix_vector(t_point *i, t_point *o, t_pmatrix *m)
 {
-	float w;
+	float	w;
 
-	o->x = i->x * m->m[0][0] + i->y * m->m[1][0] + i->z * m->m[2][0] + m->m[3][0];
-	o->y = i->x * m->m[0][1] + i->y * m->m[1][1] + i->z * m->m[2][1] + m->m[3][1];
-	o->z = i->x * m->m[0][2] + i->y * m->m[1][2] + i->z * m->m[2][2] + m->m[3][2];
+	o->x = i->x * m->m[0][0] + i->y * m->m[1][0]
+		+ i->z * m->m[2][0] + m->m[3][0];
+	o->y = i->x * m->m[0][1] + i->y * m->m[1][1] 
+		+ i->z * m->m[2][1] + m->m[3][1];
+	o->z = i->x * m->m[0][2] + i->y * m->m[1][2]
+		+ i->z * m->m[2][2] + m->m[3][2];
 	w = i->x * m->m[0][3] + i->y * m->m[1][3] + i->z * m->m[2][3] + m->m[3][3];
 	if (w != 0.0f)
 	{
-		o->x /= w; 
-		o->y /= w; 
+		o->x /= w;
+		o->y /= w;
 		o->z /= w;
 	}
 	o->c = i->c;
+}
+
+/**
+ * @brief 
+ * 
+ * @param i input
+ * @param m matrix to multiply with
+ */
+void	transform_matrix_vector(t_point *i, t_pmatrix *m)
+{
+	float	w;
+	t_point	o;
+
+	o.x = i->x * m->m[0][0] + i->y * m->m[1][0]
+		+ i->z * m->m[2][0] + m->m[3][0];
+	o.y = i->x * m->m[0][1] + i->y * m->m[1][1]
+		+ i->z * m->m[2][1] + m->m[3][1];
+	o.z = i->x * m->m[0][2] + i->y * m->m[1][2]
+		+ i->z * m->m[2][2] + m->m[3][2];
+	w = i->x * m->m[0][3] + i->y * m->m[1][3] + i->z * m->m[2][3] + m->m[3][3];
+	if (w != 0.0f)
+	{
+		o.x /= w;
+		o.y /= w;
+		o.z /= w;
+	}
+	o.c = i->c;
+	*i = o;
 }
 
 float	dmin(float x,float y){
@@ -835,49 +896,61 @@ float	dmax(float x,float y){
 		return (y);
 }
 
-void	set_variables(t_allvars *a, t_point minCamera, t_point maxCamera)
+void	set_variables(t_allvars *a, t_point min_camera, t_point max_camera)
 {
-	float ar;
-	float maxx;
-	float maxy;
-	float max;
-
+	float	ar;
+	float	maxx;
+	float	maxy;
+	float	max;
 
 	ar = (float)IMG_W / (float)IMG_H; 
-    maxx = dmax(fabs(minCamera.x), fabs(maxCamera.x)); 
-    maxy = dmax(fabs(minCamera.y), fabs(maxCamera.y)); 
-    max = dmax(maxx, maxy); 
-    a->r = max * ar;
+	maxx = dmax(fabs(min_camera.x), fabs(max_camera.x));
+	maxy = dmax(fabs(min_camera.y), fabs(max_camera.y));
+	max = dmax(maxx, maxy);
+	a->r = max * ar;
 	a->t = max; 
-    a->l = -a->r;
+	a->l = -a->r;
 	a->b = -a->t; 
+}
+
+void	set_bounding_box_while(t_allvars *a, t_point *min_world,
+									t_point *max_world)
+{
+	int	i;
+
+	i = 0;
+	while (i < (a->tx * a->ty))
+	{
+		if (a->i[i].x < min_world->x)
+			min_world->x = a->i[i].x;
+		if (a->i[i].y < min_world->y)
+			min_world->y = a->i[i].y;
+		if (a->i[i].z < min_world->z)
+			min_world->z = a->i[i].z;
+		if (a->i[i].x > max_world->x)
+			max_world->x = a->i[i].x;
+		if (a->i[i].y > max_world->y)
+			max_world->y = a->i[i].y;
+		if (a->i[i].z > max_world->z)
+			max_world->z = a->i[i].z;
+		i++;
+	}
 }
 
 // compute the scene bounding box
 void	set_bounding_box(t_allvars *a)
 {
-	int i;
-	t_point minWorld;
-	t_point maxWorld;
-	t_point minCamera;
-	t_point maxCamera;
+	t_point	min_world;
+	t_point	max_world;
+	t_point	min_camera;
+	t_point	max_camera;
 
-	minWorld = (t_point){__FLT_MAX__, __FLT_MAX__, __FLT_MAX__, 0};
-	maxWorld = (t_point){-__FLT_MAX__, -__FLT_MAX__, -__FLT_MAX__, 0};
-	i = 0;
-    while (i < (a->tx * a->ty)) 
-	{ 
-        if (a->i[i].x < minWorld.x) minWorld.x = a->i[i].x; 
-        if (a->i[i].y < minWorld.y) minWorld.y = a->i[i].y; 
-        if (a->i[i].z < minWorld.z) minWorld.z = a->i[i].z; 
-        if (a->i[i].x > maxWorld.x) maxWorld.x = a->i[i].x; 
-        if (a->i[i].y > maxWorld.y) maxWorld.y = a->i[i].y; 
-        if (a->i[i].z > maxWorld.z) maxWorld.z = a->i[i].z;
-		i++;
-    } 
-    multiply_matrix_vector(&minWorld, &minCamera, &a->wc); 
-    multiply_matrix_vector(&maxWorld, &maxCamera, &a->wc); 
-	set_variables(a, minCamera, maxCamera);
+	min_world = (t_point){__FLT_MAX__, __FLT_MAX__, __FLT_MAX__, 0};
+	max_world = (t_point){-__FLT_MAX__, -__FLT_MAX__, -__FLT_MAX__, 0};
+	set_bounding_box_while(a, &min_world, &max_world);
+	multiply_matrix_vector(&min_world, &min_camera, &a->wc);
+	multiply_matrix_vector(&max_world, &max_camera, &a->wc);
+	set_variables(a, min_camera, max_camera);
 }
 
 //checks file and gets number of rows and columns
@@ -887,7 +960,6 @@ void	count_file_items(t_allvars *a, char **argv)
 	char	*pos;
 	char	**arr;
 	int		fd;
-
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
@@ -911,6 +983,22 @@ void	count_file_items(t_allvars *a, char **argv)
 	close(fd);
 }
 
+void	allocate_matrices(t_allvars *a)
+{
+	a->i = malloc(sizeof(t_point) * (a->tx * a->ty));
+	if (!a->i)
+		quit(a, 4);
+	a->bt = malloc(sizeof(t_point) * (a->tx * a->ty));
+	if (!a->bt)
+		quit(a, 5);
+	a->o = malloc(sizeof(t_point) * (a->tx * a->ty));
+	if (!a->o)
+		quit(a, 6);
+	a->c = malloc(sizeof(t_coord) * (a->tx * a->ty));
+	if (!a->c)
+		quit(a, 7);
+}
+
 void	get_z_values(t_allvars *a, char **argv)
 {
 	int		fd;
@@ -926,7 +1014,7 @@ void	get_z_values(t_allvars *a, char **argv)
 	a->ty = a->y;
 	a->y = 0;
 	//input vector array
-	a->i = malloc(sizeof(t_point) * (a->tx * a->ty));
+	allocate_matrices(a);
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
@@ -937,13 +1025,24 @@ void	get_z_values(t_allvars *a, char **argv)
 		a->x = 0;
 		while (a->x < a->tx)
 		{
-			a->i[a->y * a->tx + a->x].x = (float)a->x;
-			a->i[a->y * a->tx + a->x].y = (float)a->y;
-			a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr[a->x]));
-			if (a->i[a->y * a->tx + a->x].z > 9)
-				a->i[a->y * a->tx + a->x].c = 0xd97bd4;
+			char	*pos2 = ft_strchr(arr[a->x], ',');
+			char	**arr2;
+			if (pos2)
+			{
+				arr2 = ft_split(arr[a->x], ',');
+				a->i[a->y * a->tx + a->x].x = (float)a->x;
+				a->i[a->y * a->tx + a->x].y = (float)a->y;
+				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr2[0]));
+				a->i[a->y * a->tx + a->x].c = (ft_atoi(arr2[1]));
+				delete_arr_arr(arr2);
+			}
 			else
-				a->i[a->y * a->tx + a->x].c = 0xffffff;
+			{
+				a->i[a->y * a->tx + a->x].x = (float)a->x;
+				a->i[a->y * a->tx + a->x].y = (float)a->y;
+				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr[a->x]));
+				a->i[a->y * a->tx + a->x].c = 0xc3c3c3;
+			}
 			a->x++;
 		}
 		delete_arr_arr(arr);
@@ -954,8 +1053,6 @@ void	get_z_values(t_allvars *a, char **argv)
 	}
 	close(fd);
 }
-
-
 
 int	main(int argc, char **argv)
 {
@@ -968,12 +1065,6 @@ int	main(int argc, char **argv)
 		quit(&a, 1);
 	count_file_items(&a, argv);
 	get_z_values(&a, argv);
-
-	a.bt = malloc(sizeof(t_point) * (a.tx * a.ty));
-	a.o = malloc(sizeof(t_point) * (a.tx * a.ty));
-	a.c = malloc(sizeof(t_coord) * (a.tx * a.ty));
-	if(!a.bt && !a.o && !a.c)
-		quit(&a, 5);
 
 	//initialize server and check
 	data.mlx_ptr = mlx_init();
@@ -994,12 +1085,13 @@ int	main(int argc, char **argv)
 	a.pm = (t_pmatrix){0};
 	a.wc = (t_pmatrix){0};
 	a.fov = 90; 
-    a.n = 0.1; 
-    a.f = 100;
+	a.n = 0.1; 
+	a.f = 100;
 	set_world_matrix_iso_transform(&a.wc);
 	set_bounding_box(&a);
 	set_ortog_matrix(&a.pm, &a);
-
+	set_transform(&a);
+	make_matrix(&a);
 
 	
 
@@ -1010,5 +1102,4 @@ int	main(int argc, char **argv)
 
 	mlx_loop(data.mlx_ptr);
 	//close window and free server
-
 }
