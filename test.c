@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 17:08:24 by mimarque          #+#    #+#             */
-/*   Updated: 2022/06/29 18:49:55 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/06/29 22:39:01 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -999,6 +999,30 @@ void	allocate_matrices(t_allvars *a)
 		quit(a, 7);
 }
 
+int hex2int(char *hex)
+{
+	int val;
+	int byte;
+	
+	val = 0;
+	while (*hex) {
+		byte = *hex++;
+		if (byte == '0' && (*hex == 'x' || *hex == 'X'))
+		{
+			hex++;
+			continue;
+		}
+		else if (byte >= '0' && byte <= '9') 
+			byte = byte - '0';
+		else if (byte >= 'a' && byte <='f')
+			byte = byte - 'a' + 10;
+		else if (byte >= 'A' && byte <='F')
+			byte = byte - 'A' + 10;
+		val = (val << 4) | (byte & 0xF);
+	}
+	return (val);
+}
+
 void	get_z_values(t_allvars *a, char **argv)
 {
 	int		fd;
@@ -1033,7 +1057,7 @@ void	get_z_values(t_allvars *a, char **argv)
 				a->i[a->y * a->tx + a->x].x = (float)a->x;
 				a->i[a->y * a->tx + a->x].y = (float)a->y;
 				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr2[0]));
-				a->i[a->y * a->tx + a->x].c = (ft_atoi(arr2[1]));
+				a->i[a->y * a->tx + a->x].c = (hex2int(arr2[1]));
 				delete_arr_arr(arr2);
 			}
 			else
@@ -1041,7 +1065,7 @@ void	get_z_values(t_allvars *a, char **argv)
 				a->i[a->y * a->tx + a->x].x = (float)a->x;
 				a->i[a->y * a->tx + a->x].y = (float)a->y;
 				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr[a->x]));
-				a->i[a->y * a->tx + a->x].c = 0xc3c3c3;
+				a->i[a->y * a->tx + a->x].c = 0xffffff;
 			}
 			a->x++;
 		}
