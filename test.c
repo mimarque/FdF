@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 17:08:24 by mimarque          #+#    #+#             */
-/*   Updated: 2022/06/29 22:39:01 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/06 00:02:11 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@
 #define MLX_ERROR 1
 #define WIN_ERROR 2
 #define PURPLE 0x00FFFFFF
-#define IMG_W 500
-#define IMG_H 500
+#define IMG_W 1280
+#define IMG_H 720
+#define MENU_W 250
+#define LTR_C 0x111111
 #define GAMMA 0.43
 #define BUFFER_SIZE 42
 #define NUM_OF_FD 256
@@ -312,6 +314,8 @@ typedef struct s_allvars
 	t_pmatrix	pm;
 	t_pmatrix	wc;
 	t_pmatrix	tw;
+	char		mode;
+	char		menu;
 	float		fov;
 	float		f;
 	float		n;
@@ -319,6 +323,15 @@ typedef struct s_allvars
 	float		l;
 	float		t;
 	float		b;
+	float		brange;
+	float		zoom;
+	float		scale;
+	float		tlx;
+	float		tly;
+	float		tlz;
+	float		rx;
+	float		ry;
+	float		rz;
 	int			x;
 	int			y;
 	int			tx;
@@ -329,6 +342,7 @@ typedef struct s_allvars
 
 void	multiply_matrix_vector(t_point *i, t_point *o, t_pmatrix *m);
 void	transform_matrix_vector(t_point *i, t_pmatrix *m);
+void	make_matrix(t_allvars *a);
 
 //since mlx_pixel_put works slowly but fast enough to cause tearing
 //we make our own function to put data in the image unidimetional array
@@ -364,7 +378,7 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 //		int b = 00000000 00000000 000000000 000000bb
 //		t<<24 = aaaaaaaa 00000000 000000000 00000000
 //		r<<16 = 00000000 00rrrrrr 000000000 00000000
-//	  g<<8  = 00000000 00000000 ggggggggg 00000000
+//	  	g<<8  = 00000000 00000000 ggggggggg 00000000
 //	  t|r|g|b = aaaaaaaa 00rrrrrr ggggggggg 000000bb
 //
 //the x = x & 0xFF; caps x value to a max of 255 so it doesnt overflow
@@ -451,11 +465,67 @@ int quit(t_allvars *a, int error)
 //So using something like
 //keysym == kVK_Escape || keysym == XK_Escape
 //is not a good idea
-int	keypress(int keysym, t_allvars *a)
+int	keypress(int key, t_allvars *a)
 {
-	ft_printf("%#010X\n", keysym);
-	if (keysym == kVK_Escape)
+	if (key == kVK_Escape)
 		quit(a, 0);
+	if (key == kVK_ANSI_I)
+		a->mode = 'i';
+	if (key == kVK_ANSI_O)
+		a->mode = 'o';
+	if (key == kVK_ANSI_P)
+		a->mode = 'p';
+	if (key == kVK_ANSI_C)
+		a->mode = 'c';
+	if (key == kVK_ANSI_A)
+		a->tlx -= 1;
+	if (key == kVK_ANSI_D)
+		a->tlx += 1;
+	if (key == kVK_ANSI_S)
+		a->tly -= 1;
+	if (key == kVK_ANSI_W)
+		a->tly += 1;
+	if (key == kVK_ANSI_Z)
+	{
+		if (a->mode != 'p')
+			a->zoom += 0.5;
+		else
+			a->fov -= 10;
+	}
+	if (key == kVK_ANSI_X)
+	{
+		if (a->mode != 'p')
+			a->zoom -= 0.5;
+		else
+			a->fov += 10;
+	}
+	if (key == kVK_UpArrow)
+		a->scale += 0.1;
+	if (key == kVK_DownArrow)
+		a->scale -= 0.1;
+	if (key == kVK_LeftArrow)
+		a->brange += 0.005;
+	if (key == kVK_RightArrow)
+		a->brange -= 0.005;
+	if (key == kVK_ANSI_F)
+		a->rz -= 5;
+	if (key == kVK_ANSI_G)
+		a->rz += 5;
+	if (key == kVK_ANSI_H)
+		a->ry -= 5;
+	if (key == kVK_ANSI_J)
+		a->ry += 5;
+	if (key == kVK_ANSI_K)
+		a->rx -= 5;
+	if (key == kVK_ANSI_L)
+		a->rx += 5;
+	if (key == kVK_ANSI_M)
+	{
+		if (a->menu == 0)
+			a->menu = 1;
+		else
+			a->menu = 0;
+	}
 	return (0);
 }
 
@@ -583,14 +653,14 @@ void 	inverse(t_calcol *c, int scolor, int ecolor)
 	c->bright2 = pow(sumChannels(c->color2_lin), GAMMA);
 }
 
-void	init_bresenhams(t_bresvars *v, int x1, int y1, int x2, int y2)
+void	init_bresenhams(t_bresvars *v, t_coord *start, t_coord *end)
 {
-	v->x = x1;
-	v->y = y1;
-	v->dx = abs(x2 - x1);
-	v->dy = abs(y2 - y1);
-	v->s1 = sign(x2 - x1);
-	v->s2 = sign(y2 - y1);
+	v->x = start->x;
+	v->y = start->y;
+	v->dx = abs(end->x - start->x);
+	v->dy = abs(end->y - start->y);
+	v->s1 = sign(end->x - start->x);
+	v->s2 = sign(end->y - start->y);
 	v->swap = 0;
 	if (v->dy > v->dx)
 	{
@@ -635,48 +705,78 @@ void	bresenhams_alg(t_coord *start, t_coord *end, t_allvars *a)
 	t_calcol	c;
 
 	inverse(&c, start->c, end->c);
-	init_bresenhams(&v, start->x, start->y, end->x, end->y);
+	init_bresenhams(&v, start, end);
 	bresenhams_cycle(&v, &c, a);
 	free(c.color1_lin);
 	free(c.color2_lin);
 }
 
-void	make_matrix(t_allvars *a)
+void	clear_image(t_allvars *a)
 {
-	int	xp;
-	int	yp;
+	int k;
+	int l;
 
+	k = 0;
+	while (k < IMG_H)
+	{
+		l = 0;
+		while (l < IMG_W)
+		{
+			my_mlx_pixel_put(&a->img, l, k, 0x151515);
+			l++;
+		}
+		k++;
+	}
+	mlx_put_image_to_window(a->data.mlx_ptr, a->data.win_ptr, a->img.img, 0, 0);
+	mlx_clear_window(a->data.mlx_ptr, a->data.win_ptr);
+}
+
+void	menu_text(t_allvars *a)
+{
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 50, LTR_C, "W,A,S,D to translate on x & y");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 90, LTR_C, "I for isometric projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 110, LTR_C, "O for parallel projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 130, LTR_C, "P for perspective projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 150, LTR_C, "C for conical projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 180, LTR_C, "Z and X for zoom");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 200, LTR_C, "Up and Down to scale z");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 220, LTR_C, "Left and right to scale bending");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 260, LTR_C, "F and G to rotate on z");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 280, LTR_C, "H and J to rotate on y");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 300, LTR_C, "K and L to rotate on x");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 320, LTR_C, "M to toggle the menu");
+}
+
+void	put_lines(t_allvars *a)
+{
 	for (int k = 0; k < a->ty; k++)
 	{
 		for (int l = 0; l < a->tx; l++)
 		{
-			multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
-			transform_matrix_vector(&a->bt[k * a->tx + l], &a->tw);
-			multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
-			xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W); 
-			yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
-			a->c[k * a->tx + l].x = xp;
-			a->c[k * a->tx + l].y = yp;
-			a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
+			if (l < a->tx - 1)
+				bresenhams_alg(&a->c[k * a->tx + l], &a->c[k * a->tx + l + 1], a);
+			if (k < a->ty -1)
+				bresenhams_alg(&a->c[k * a->tx + l], &a->c[(k + 1 )* a->tx + l], a);
 		}
+	}
+	if (a->menu == 1)
+	{
+		for (int i = 0; i < IMG_H; i++)
+			for (int j = 0; j < MENU_W; j++)
+				my_mlx_pixel_put(&a->img, j, i, 0xc3c3c3);
 	}
 }
 
 int	render(t_allvars *a)
 {
+	make_matrix(a);
 	if (a->data.win_ptr != NULL)
 	{
-		for (int k = 0; k < a->ty; k++)
-		{
-			for (int l = 0; l < a->tx; l++)
-			{
-				if (l < a->tx - 1)
-					bresenhams_alg(&a->c[k * a->tx + l], &a->c[k * a->tx + l + 1], a);
-				if (k < a->ty -1)
-					bresenhams_alg(&a->c[k * a->tx + l], &a->c[(k + 1 )* a->tx + l], a);
-			}
-		}
+		clear_image(a);
+		put_lines(a);
 		mlx_put_image_to_window(a->data.mlx_ptr, a->data.win_ptr, a->img.img, 0, 0);
+		if (a->menu == 1)
+			menu_text(a);
 	}	
 	return (0);
 }
@@ -724,7 +824,7 @@ void	check_items_inline(t_allvars *a, char *line, char **arr, int *j)
 	}
 }
 
-void	set_transform(t_allvars *a)
+void	set_identity(t_allvars *a)
 {
 	a->tw.m[0][0] = 1;
 	a->tw.m[0][1] = 0;
@@ -739,87 +839,145 @@ void	set_transform(t_allvars *a)
 	a->tw.m[2][2] = 1;
 	a->tw.m[2][3] = 0;
 	a->tw.m[3][0] = 0;
-	a->tw.m[3][1] = -((a->b) / 2);
+	a->tw.m[3][1] = 0;
 	a->tw.m[3][2] = 0;
 	a->tw.m[3][3] = 1;
 }
 
-//a = Rotation on z
-//b = Rotation on y
-//g = Rotation on x
-void	set_world_matrix_iso_transform(t_pmatrix *wc)
+void	set_iso_op_matrix(t_pmatrix *wc, t_allvars *al)
 {
 	float	a;
 	float	b;
 	float	g;
-
-	a = -45.0 * (M_PI / 180.0);
-	b = 0.0 * (M_PI / 180.0);
-	g = (180 + 35.264) * (M_PI / 180.0);
+	
+	a = (45.0 + al->rz) * (M_PI / 180.0);
+	b = (0.0 + al->ry) * (M_PI / 180.0);
+	g = (35.264 + al->rx) * (M_PI / 180.0);
 	wc->m[0][0] = cos(a) * cos(b);
 	wc->m[0][1] = cos(a) * sin(b) * sin(g) - sin(a) * cos(g);
 	wc->m[0][2] = cos(a) * sin(b) * cos(g) + sin(a) * sin(g);
 	wc->m[0][3] = 0;
-	wc->m[1][0] = sin(a) * cos(b);
-	wc->m[1][1] = sin(a) * sin(b) * sin(g) + cos(a) * cos(g);
-	wc->m[1][2] = sin(a) * sin(b) * cos(g) - cos(a) * sin(g);
+	wc->m[1][0] = sin(a) * (-cos(b));
+	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
 	wc->m[1][3] = 0;
-	wc->m[2][0] = -sin(b);
-	wc->m[2][1] = cos(b) * sin(g);
-	wc->m[2][2] = cos(b) * cos(g);
+	wc->m[2][0] = -al->scale * sin(b);
+	wc->m[2][1] = al->scale * cos(b) * sin(g);
+	wc->m[2][2] = al->scale * cos(b) * cos(g);
 	wc->m[2][3] = 0;
-	wc->m[3][0] = 0;
-	wc->m[3][1] = 0;
-	wc->m[3][2] = 0;
+	wc->m[3][0] = al->tlx;
+	wc->m[3][1] = al->tly;
+	wc->m[3][2] = al->tlz;
 	wc->m[3][3] = 1;
 }
 
-void	set_world_matrix(t_pmatrix *wc)
+void	set_paralel_matrix(t_pmatrix *wc, t_allvars *al)
 {
-	wc->m[0][0] = 1;
-	wc->m[0][1] = 0;
-	wc->m[0][2] = 0;
+	float	a;
+	float	b;
+	float	g;
+	
+	a = (0 + al->rz) * (M_PI / 180.0);
+	b = (0 + al->ry) * (M_PI / 180.0);
+	g = (0 + al->rx) * (M_PI / 180.0);
+	wc->m[0][0] = cos(a) * cos(b);
+	wc->m[0][1] = cos(a) * sin(b) * sin(g) - sin(a) * cos(g);
+	wc->m[0][2] = cos(a) * sin(b) * cos(g) + sin(a) * sin(g);
 	wc->m[0][3] = 0;
-	wc->m[1][0] = 0;
-	wc->m[1][1] = 1;
-	wc->m[1][2] = 0;
+	wc->m[1][0] = sin(a) * (-cos(b));
+	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
 	wc->m[1][3] = 0;
-	wc->m[2][0] = 0;
-	wc->m[2][1] = 0;
-	wc->m[2][2] = 1;
+	wc->m[2][0] = -al->scale * sin(b);
+	wc->m[2][1] = al->scale * cos(b) * sin(g);
+	wc->m[2][2] = al->scale * cos(b) * cos(g);
 	wc->m[2][3] = 0;
-	wc->m[3][0] = 0;
-	wc->m[3][1] = 0;
-	wc->m[3][2] = 0;
+	wc->m[3][0] = al->tlx;
+	wc->m[3][1] = al->tly;
+	wc->m[3][2] = al->tlz;
 	wc->m[3][3] = 1;
 }
 
-void	set_projection_matrix(t_pmatrix *pm, float n, float f, float fov)
+
+/*
+wc->m[3][0] = cos(b) * (al->tlx * cos(a) + al->tly * sin(a)) - al->tlz * sin(b) ;
+wc->m[3][1] = sin(g) * (sin(b) * (al->tlx * cos(a) + al->tly * sin(a)) + al->tlz * cos(b)) + cos(g) * (al->tly * cos(a) - al->tlx * sin(a));
+wc->m[3][2] = cos(g) * (sin(b) * (al->tlx * cos(a) + al->tly * sin(a)) + al->tlz * cos(b)) - sin(g) * (al->tly * cos(a) - al->tlx * sin(a));
+*/
+void	world_matrix(t_pmatrix *wc, t_allvars *al)
+{	
+	float	a;
+	float	b;
+	float	g;
+	
+	a = (0 + al->rz) * (M_PI / 180.0);
+	b = (0 + al->ry) * (M_PI / 180.0);
+	g = (0 + al->rx) * (M_PI / 180.0);
+	wc->m[0][0] = cos(a) * cos(b);
+	wc->m[0][1] = cos(a) * sin(b) * sin(g) - sin(a) * cos(g);
+	wc->m[0][2] = cos(a) * sin(b) * cos(g) + sin(a) * sin(g);
+	wc->m[0][3] = 0;
+	wc->m[1][0] = sin(a) * (-cos(b));
+	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
+	wc->m[1][3] = 0;
+	wc->m[2][0] = -al->scale * sin(b);
+	wc->m[2][1] = al->scale * cos(b) * sin(g);
+	wc->m[2][2] = al->scale * cos(b) * cos(g);
+	wc->m[2][3] = 0;
+	wc->m[3][0] = al->tlx;
+	wc->m[3][1] = al->tly;
+	wc->m[3][2] = al->tlz;
+	wc->m[3][3] = 1;
+}
+
+void	set_projection_matrix(t_pmatrix *pm, t_allvars *a)
 {
 	float	scale;
 
-	scale = 1.0 / tan(fov * 0.5 * M_PI / 180.0);
+	scale = 1.0 / tan(a->fov * 0.5 * M_PI / 180.0);
 	pm->m[0][0] = scale;
 	pm->m[1][1] = scale;
-	pm->m[2][2] = (-f) / (f - n);
-	pm->m[3][2] = (-f * n) / (f - n);
+	pm->m[2][2] = (-a->f) / (a->f - a->n);
+	pm->m[3][2] = (-a->f * a->n) / (a->f - a->n);
 	pm->m[2][3] = -1.0;
 	pm->m[3][3] = 0.0;
 }
 
+
 void	set_ortog_matrix(t_pmatrix *pm, t_allvars *a)
 {
-	pm->m[0][0] = 2.0 / (a->r - a->l);
+	pm->m[0][0] = (2.0 / (a->r - a->l)) * a->zoom;
 	pm->m[0][1] = 0;
 	pm->m[0][2] = 0;
 	pm->m[0][3] = 0;
 	pm->m[1][0] = 0;
-	pm->m[1][1] = 2.0 / (a->t - a->b);
+	pm->m[1][1] = (2.0 / (a->t - a->b)) * a->zoom;
 	pm->m[1][2] = 0;
 	pm->m[1][3] = 0;
 	pm->m[2][0] = 0;
 	pm->m[2][1] = 0;
-	pm->m[2][2] = -2.0 / (a->f - a->n);
+	pm->m[2][2] = -(2.0 / (a->f - a->n)) * a->zoom;
+	pm->m[2][3] = 0;
+	pm->m[3][0] = -(a->r + a->l) / (a->r - a->l);
+	pm->m[3][1] = -(a->t + a->b) / (a->t - a->b);
+	pm->m[3][2] = -(a->f + a->n) / (a->f - a->n);
+	pm->m[3][3] = 1;
+}
+
+void	set_ortog_matrix2(t_pmatrix *pm, t_allvars *a)
+{
+	pm->m[0][0] = (2.0 / (a->r - a->l)) * a->zoom;
+	pm->m[0][1] = 0;
+	pm->m[0][2] = 0;
+	pm->m[0][3] = 0;
+	pm->m[1][0] = 0;
+	pm->m[1][1] = -(2.0 / (a->t - a->b)) * a->zoom;
+	pm->m[1][2] = 0;
+	pm->m[1][3] = 0;
+	pm->m[2][0] = 0;
+	pm->m[2][1] = 0;
+	pm->m[2][2] = (-2.0 / (a->f - a->n)) * -a->zoom;
 	pm->m[2][3] = 0;
 	pm->m[3][0] = -(a->r + a->l) / (a->r - a->l);
 	pm->m[3][1] = -(a->t + a->b) / (a->t - a->b);
@@ -828,7 +986,7 @@ void	set_ortog_matrix(t_pmatrix *pm, t_allvars *a)
 }
 
 /**
- * @brief 
+ * @brief multiplies matrix i with m and outputs it to o
  * 
  * @param i input
  * @param o output
@@ -855,7 +1013,7 @@ void	multiply_matrix_vector(t_point *i, t_point *o, t_pmatrix *m)
 }
 
 /**
- * @brief 
+ * @brief multiplies matrix i with m and outputs it to i
  * 
  * @param i input
  * @param m matrix to multiply with
@@ -896,7 +1054,7 @@ float	dmax(float x,float y){
 		return (y);
 }
 
-void	set_variables(t_allvars *a, t_point min_camera, t_point max_camera)
+void	set_bb_variables(t_allvars *a, t_point min_camera, t_point max_camera)
 {
 	float	ar;
 	float	maxx;
@@ -907,10 +1065,10 @@ void	set_variables(t_allvars *a, t_point min_camera, t_point max_camera)
 	maxx = dmax(fabs(min_camera.x), fabs(max_camera.x));
 	maxy = dmax(fabs(min_camera.y), fabs(max_camera.y));
 	max = dmax(maxx, maxy);
-	a->r = max * ar;
+	a->r = (max * ar);
 	a->t = max; 
-	a->l = -a->r;
-	a->b = -a->t; 
+	a->l = -(a->r);
+	a->b = -(a->t); 
 }
 
 void	set_bounding_box_while(t_allvars *a, t_point *min_world,
@@ -950,7 +1108,144 @@ void	set_bounding_box(t_allvars *a)
 	set_bounding_box_while(a, &min_world, &max_world);
 	multiply_matrix_vector(&min_world, &min_camera, &a->wc);
 	multiply_matrix_vector(&max_world, &max_camera, &a->wc);
-	set_variables(a, min_camera, max_camera);
+	set_bb_variables(a, min_camera, max_camera);
+}
+
+void	get_z_offset(t_allvars *a)
+{
+	t_point	max_world;
+	int		i;
+
+	max_world = (t_point){-__FLT_MAX__, -__FLT_MAX__, -__FLT_MAX__, 0};
+	i = 0;
+	while (i++ < (a->tx * a->ty))
+		if (a->i[i].z > max_world.z)
+			max_world.z = a->i[i].z;
+	a->tlz = -(max_world.z + 1);
+}
+
+void	get_xyz_offset(t_allvars *a)
+{
+	a->tlx = -(a->tx / 4);
+	a->tly = (a->ty / 4);
+	get_z_offset(a);
+}
+
+float	clamp(float value, float min, float max)
+{
+	if (value < min)
+		return (min);
+	else if (value > max)
+		return (max);
+	else
+		return (value);
+}
+
+float	inv_value(float value)
+{
+	if (value > 0.0)
+		return (1.0 / value);
+	else
+		return (0.0);
+}
+ 
+int	my_sign(float value)
+{
+	if (value < 0.0)
+		return (-1);
+	else if (value > 0.0)
+		return (1);
+	else
+		return (0);
+}
+
+void	set_rot_y(t_pmatrix *mat, float ammount_rad)
+{
+	float c;
+	float s;
+
+	s = sin(ammount_rad);
+	c = cos(ammount_rad);
+	mat->m[0][0] = c;
+	mat->m[0][1] = 0;
+	mat->m[0][2] = s;
+	mat->m[0][3] = 0;
+	mat->m[1][0] = 0;
+	mat->m[1][1] = 1;
+	mat->m[1][2] = 0;
+	mat->m[1][3] = 0;
+	mat->m[2][0] = -s;
+	mat->m[2][1] = 0;
+	mat->m[2][2] = c;
+	mat->m[2][3] = 0;
+	mat->m[3][0] = 0;
+	mat->m[3][1] = 0;
+	mat->m[3][2] = 0;
+	mat->m[3][3] = 1;
+}
+
+void	matrix_multiply_4by4(float src1[4][4], float src2[4][4], float dest[4][4])
+{
+	dest[0][0] = src1[0][0] * src2[0][0] + src1[0][1] * src2[1][0] + src1[0][2] * src2[2][0] + src1[0][3] * src2[3][0]; 
+	dest[0][1] = src1[0][0] * src2[0][1] + src1[0][1] * src2[1][1] + src1[0][2] * src2[2][1] + src1[0][3] * src2[3][1]; 
+	dest[0][2] = src1[0][0] * src2[0][2] + src1[0][1] * src2[1][2] + src1[0][2] * src2[2][2] + src1[0][3] * src2[3][2]; 
+	dest[0][3] = src1[0][0] * src2[0][3] + src1[0][1] * src2[1][3] + src1[0][2] * src2[2][3] + src1[0][3] * src2[3][3]; 
+	dest[1][0] = src1[1][0] * src2[0][0] + src1[1][1] * src2[1][0] + src1[1][2] * src2[2][0] + src1[1][3] * src2[3][0]; 
+	dest[1][1] = src1[1][0] * src2[0][1] + src1[1][1] * src2[1][1] + src1[1][2] * src2[2][1] + src1[1][3] * src2[3][1]; 
+	dest[1][2] = src1[1][0] * src2[0][2] + src1[1][1] * src2[1][2] + src1[1][2] * src2[2][2] + src1[1][3] * src2[3][2]; 
+	dest[1][3] = src1[1][0] * src2[0][3] + src1[1][1] * src2[1][3] + src1[1][2] * src2[2][3] + src1[1][3] * src2[3][3]; 
+	dest[2][0] = src1[2][0] * src2[0][0] + src1[2][1] * src2[1][0] + src1[2][2] * src2[2][0] + src1[2][3] * src2[3][0]; 
+	dest[2][1] = src1[2][0] * src2[0][1] + src1[2][1] * src2[1][1] + src1[2][2] * src2[2][1] + src1[2][3] * src2[3][1]; 
+	dest[2][2] = src1[2][0] * src2[0][2] + src1[2][1] * src2[1][2] + src1[2][2] * src2[2][2] + src1[2][3] * src2[3][2]; 
+	dest[2][3] = src1[2][0] * src2[0][3] + src1[2][1] * src2[1][3] + src1[2][2] * src2[2][3] + src1[2][3] * src2[3][3]; 
+	dest[3][0] = src1[3][0] * src2[0][0] + src1[3][1] * src2[1][0] + src1[3][2] * src2[2][0] + src1[3][3] * src2[3][0]; 
+	dest[3][1] = src1[3][0] * src2[0][1] + src1[3][1] * src2[1][1] + src1[3][2] * src2[2][1] + src1[3][3] * src2[3][1]; 
+	dest[3][2] = src1[3][0] * src2[0][2] + src1[3][1] * src2[1][2] + src1[3][2] * src2[2][2] + src1[3][3] * src2[3][2]; 
+	dest[3][3] = src1[3][0] * src2[0][3] + src1[3][1] * src2[1][3] + src1[3][2] * src2[2][3] + src1[3][3] * src2[3][3]; 
+};
+
+void sum_vect(t_point *src1, t_point *src2)
+{
+	src1->x += src2->x;
+	src1->y += src2->y;
+	src1->z += src2->z;
+}
+
+void sub_vect(t_point *src1, t_point *src2)
+{
+	src1->x -= src2->x;
+	src1->y -= src2->y;
+	src1->z -= src2->z;
+}
+
+void	bend_it2(t_point *mvPos, t_allvars *a)
+{
+	float		curveAmount;
+	float		invRange;
+	float		amountToApplyCurve;
+	t_point		point;
+	t_pmatrix	rmat;
+
+	curveAmount = a->brange / a->tx/4;
+	invRange = inv_value(a->brange);
+
+	amountToApplyCurve = clamp(mvPos->z * invRange, 0.0, 1.0);
+	set_rot_y(&rmat, curveAmount * amountToApplyCurve * my_sign(mvPos->x));
+	point = (t_point){0, 0, -a->brange * amountToApplyCurve, 0};
+	sum_vect(mvPos, &point);
+	transform_matrix_vector(mvPos, &rmat);
+}
+
+void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
+{
+	float	vv;
+	float	x;
+
+	x = abs((int)inpt->x);
+	vv = (x * x) * (a->brange);
+	outpt->x = inpt->x;
+	outpt->y = inpt->y;
+	outpt->z = inpt->z + vv;
 }
 
 //checks file and gets number of rows and columns
@@ -1054,18 +1349,23 @@ void	get_z_values(t_allvars *a, char **argv)
 			if (pos2)
 			{
 				arr2 = ft_split(arr[a->x], ',');
-				a->i[a->y * a->tx + a->x].x = (float)a->x;
-				a->i[a->y * a->tx + a->x].y = (float)a->y;
-				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr2[0]));
+				a->i[a->y * a->tx + a->x].x = (float)a->x -(a->tx/2);
+				a->i[a->y * a->tx + a->x].y = (float)a->y -(a->ty/2);
+				a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr2[0]));
 				a->i[a->y * a->tx + a->x].c = (hex2int(arr2[1]));
 				delete_arr_arr(arr2);
 			}
 			else
 			{
-				a->i[a->y * a->tx + a->x].x = (float)a->x;
-				a->i[a->y * a->tx + a->x].y = (float)a->y;
-				a->i[a->y * a->tx + a->x].z = (float)-(ft_atoi(arr[a->x]));
-				a->i[a->y * a->tx + a->x].c = 0xffffff;
+				a->i[a->y * a->tx + a->x].x = (float)a->x -(a->tx/2);
+				a->i[a->y * a->tx + a->x].y = (float)a->y -(a->ty/2);
+				a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr[a->x]));
+				if (a->i[a->y * a->tx + a->x].z >= 10)
+					a->i[a->y * a->tx + a->x].c = 0xf3b03d;
+				else if (a->i[a->y * a->tx + a->x].z <= -10)
+					a->i[a->y * a->tx + a->x].c = 0xffffff;
+				else
+					a->i[a->y * a->tx + a->x].c = 0x9A1F6A;
 			}
 			a->x++;
 		}
@@ -1078,12 +1378,66 @@ void	get_z_values(t_allvars *a, char **argv)
 	close(fd);
 }
 
+void	set_matrices(t_allvars *a)
+{
+	if (a->mode == 'i')
+		set_iso_op_matrix(&a->wc, a);
+	else if (a->mode == 'o')
+		set_paralel_matrix(&a->wc, a);
+	else
+		world_matrix(&a->wc, a);
+	if (a->mode == 'i' || a->mode == 'o')
+	{
+		set_bounding_box(a);
+		set_ortog_matrix(&a->pm, a);
+	}
+	else if (a->mode == 'p')
+		set_projection_matrix(&a->pm, a);
+}
+
+void	make_matrix(t_allvars *a)
+{
+	int	xp;
+	int	yp;
+	
+	set_matrices(a);
+	for (int k = 0; k < a->ty; k++)
+	{
+		for (int l = 0; l < a->tx; l++)
+		{
+			if (a->mode == 'c')
+			{
+				bend_it(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], a);
+				transform_matrix_vector(&a->bt[k * a->tx + l], &a->wc);
+				multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+			}
+			else
+			multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
+			multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+			if (a->mode != 'i' || a->mode != 'o')
+			{
+				xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W); 
+				yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
+			}
+			else
+			{
+				xp = (int)(a->o[k * a->tx + l].x); 
+				yp = (int)(a->o[k * a->tx + l].y);
+			}
+			a->c[k * a->tx + l].x = xp;
+			a->c[k * a->tx + l].y = yp;
+			a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
+		}
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_allvars	a;
 	t_data		data;
 	t_img		img;
 
+	a = (t_allvars){0};
 	//open file
 	if (argc != 2)
 		quit(&a, 1);
@@ -1108,19 +1462,19 @@ int	main(int argc, char **argv)
 	a.img = img;
 	a.pm = (t_pmatrix){0};
 	a.wc = (t_pmatrix){0};
+	a.tw = (t_pmatrix){0};
 	a.fov = 90; 
-	a.n = 0.1; 
+	a.n = 0.05; 
 	a.f = 100;
-	set_world_matrix_iso_transform(&a.wc);
-	set_bounding_box(&a);
-	set_ortog_matrix(&a.pm, &a);
-	set_transform(&a);
-	make_matrix(&a);
-
+	a.brange = 0.015;
+	get_z_offset(&a);
+	a.scale = 1;
+	a.zoom = 1;
+	a.mode = 'i';
 	
 
 	mlx_loop_hook(data.mlx_ptr, render, &a);
-	//mlx_key_hook(data.win_ptr, keypress, &data);
+	mlx_key_hook(data.win_ptr, keypress, &a);
 	//close program on close window
 	mlx_hook(data.win_ptr, 17, 0, quit, &a);
 

@@ -35,6 +35,8 @@ Version: 2
 
 [A bit more indepth](https://aurelienbrabant.fr/blog/managing-events-with-the-minilibx)
 
+[Small guide](https://github.com/VBrazhnik/FdF/wiki)
+
 ---
 
 ### Keyboard key codes:
@@ -83,21 +85,44 @@ Understanding Computer Graphics and Coordinates:
 
 [More matrix Projection](https://www.songho.ca/opengl/gl_projectionmatrix.html)
 
+[Killer matrix Projection examples](https://www.mathematik.uni-marburg.de/~thormae/lectures/graphics1/graphics_6_2_eng_web.html)
   
-  
-  
+[orthogonal projection matrix plainly explained](https://blog.demofox.org/2017/03/31/orthogonal-projection-matrix-plainly-explained/) 
   
   
   
 
-Step by step:
+Step by step (without matrices):
 
 [(Korean) Velog Link](https://velog.io/@24siefil/FdF-Graphics)
 
-  
-  
 
-Rotation Matrix I used:
+<br/>
+
+### More Resources:
+
+
+[42Guide](https://tangible-harbor-c59.notion.site/FT_Cursus-98f688bd250a4601b6e55ac699d17cb0)
+
+## 3. Explanation:
+
+I decided to use matrices to put things on the screen because I knew I would have better support,
+more resources and that the bonus would use them.
+
+Note that there are 2 types of matrix storage:
+
+```
+Row Major Matrix              Column Major Matrix
+
+[_00, _01, _02, _03]          [_00, _10, _20, _30]
+[_10, _11, _12, _13]          [_01, _11, _21, _31]
+[_20, _21, _22, _23]          [_02, _12, _22, _32]
+[_30, _31, _32, _33]          [_03, _13, _23, _33]
+```
+
+I use Row Major on my program.
+
+World transform Matrix I used:
 
 ```
 
@@ -106,19 +131,20 @@ Rotation Matrix I used:
 ┃                                                                                        ┃
 ┃  sin(a)cos(b)   sin(a)sin(b)sin(g)+cos(a)cos(g)   sin(a)sin(b)cos(g)-cos(a)sin(g)   0  ┃
 ┃                                                                                        ┃
-┃    -sin(b)               cos(b)sin(g)                       cos(b)cos(g)            0  ┃
+┃    - S sin(b)           S cos(b)sin(g)                    S cos(b)cos(g)            0  ┃
 ┃                                                                                        ┃
 ┃       0                        0                                  0                 1  ┃
 ┗                                                                                        ┛
 
 ```
 
-Where `a` is rotation on `z`, `b` is rotation on `y`, `g` is rotation on `x`
+Where `a` is rotation on `z`, `b` is rotation on `y`, `g` is rotation on `x` 
 
+and `S` is the scaling of `z`.
+
+It comes from multiplying z scaling matrix with R(z) R(y) R(x) rotation matrices:
+
+![image](https://imgur.com/MObrHOy.png)
   
 
 For Isometric projection angles see: https://en.wikipedia.org/wiki/Isometric_projection#Overview
-
-  
-
-<br/>
