@@ -6,10 +6,9 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 17:08:24 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 01:37:15 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/06 04:05:43 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include <stdio.h>
 #include <math.h>
@@ -24,7 +23,6 @@
 
 # define KEYPRESS 2
 # define KEYRELEASE 3
-
 
 # define MB1				1
 # define MB2				3
@@ -359,7 +357,8 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	if (x < IMG_W && y < IMG_H && x > 0 && y > 0)
 	{
 		i = img->bits_per_pixel - 8;
-		pixel = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
+		pixel = img->addr + (y * img->line_length + x
+				* (img->bits_per_pixel / 8));
 		while (i >= 0)
 		{
 			if (img->endian != 0)
@@ -412,6 +411,7 @@ int	get_b(int trgb)
 
 /**
  * @brief Closes window and frees memory
+ * Although I 
  * 
  * @param data Data struct used in this program
  * @param error 0 if successfull 
@@ -419,7 +419,6 @@ int	get_b(int trgb)
  */
 int quit(t_allvars *a, int error)
 {
-	ft_printf("%d", error);
 	if (error == 1)
 		ft_printf("Wrong arguments.\nusage: ./FdF <map.fdf>");
 	else if (error == 2)
@@ -446,7 +445,22 @@ int quit(t_allvars *a, int error)
 		free(a->o);
 		ft_printf("Error allocating memory");
 	}
-	else if (error >= 7 || error == 0)
+	else if (error == 8)
+	{
+		free(a->i);
+		free(a->bt);
+		free(a->o);
+		free(a->c);
+	}
+	else if (error == 9)
+	{
+		free(a->i);
+		free(a->bt);
+		free(a->o);
+		free(a->c);
+		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
+	}
+	else if (error >= 9 || error == 0)
 	{
 		free(a->i);
 		free(a->bt);
@@ -458,33 +472,63 @@ int quit(t_allvars *a, int error)
 	exit(error);
 }
 
-//for keypresses macOS uses Carbon.HIToolbox.Events.h
-//and in Linux it uses X11's X11/keysymdef.h
-//Note that for example "5" and "ESC"
-//create the same value in X11 or Cocoa
-//So using something like
-//keysym == kVK_Escape || keysym == XK_Escape
-//is not a good idea
-int	keypress(int key, t_allvars *a)
+int	keypress1(int key, t_allvars *a)
 {
-	if (key == kVK_Escape)
-		quit(a, 0);
 	if (key == kVK_ANSI_I)
 		a->mode = 'i';
-	if (key == kVK_ANSI_O)
+	else if (key == kVK_ANSI_O)
 		a->mode = 'o';
-	if (key == kVK_ANSI_P)
+	else if (key == kVK_ANSI_P)
 		a->mode = 'p';
-	if (key == kVK_ANSI_C)
-		a->mode = 'c';
-	if (key == kVK_ANSI_A)
+	else if (key == kVK_ANSI_C)
+	{
+		if (a->mode == 'p')
+			a->mode = 'c';
+		else
+			a->mode = 'p';
+	}
+	else if (key == kVK_ANSI_A)
 		a->tlx -= 1;
-	if (key == kVK_ANSI_D)
+	else if (key == kVK_ANSI_D)
 		a->tlx += 1;
-	if (key == kVK_ANSI_S)
+	else if (key == kVK_ANSI_S)
 		a->tly -= 1;
-	if (key == kVK_ANSI_W)
+	else if (key == kVK_ANSI_W)
 		a->tly += 1;
+	else
+		return (0);
+	return (1);
+}
+
+int	keypress2(int key, t_allvars *a)
+{
+	if (key == kVK_UpArrow)
+		a->scale += 0.1;
+	else if (key == kVK_DownArrow)
+		a->scale -= 0.1;
+	else if (key == kVK_LeftArrow)
+		a->brange += 0.005;
+	else if (key == kVK_RightArrow)
+		a->brange -= 0.005;
+	else if (key == kVK_ANSI_F)
+		a->rz -= 5;
+	else if (key == kVK_ANSI_G)
+		a->rz += 5;
+	else if (key == kVK_ANSI_H)
+		a->ry -= 5;
+	else if (key == kVK_ANSI_J)
+		a->ry += 5;
+	else if (key == kVK_ANSI_K)
+		a->rx -= 5;
+	else if (key == kVK_ANSI_L)
+		a->rx += 5;
+	else
+		return (0);
+	return (1);
+}
+
+int	keypress3(int key, t_allvars *a)
+{
 	if (key == kVK_ANSI_Z)
 	{
 		if (a->mode != 'p')
@@ -492,34 +536,14 @@ int	keypress(int key, t_allvars *a)
 		else
 			a->fov -= 10;
 	}
-	if (key == kVK_ANSI_X)
+	else if (key == kVK_ANSI_X)
 	{
 		if (a->mode != 'p')
 			a->zoom -= 0.5;
 		else
 			a->fov += 10;
 	}
-	if (key == kVK_UpArrow)
-		a->scale += 0.1;
-	if (key == kVK_DownArrow)
-		a->scale -= 0.1;
-	if (key == kVK_LeftArrow)
-		a->brange += 0.005;
-	if (key == kVK_RightArrow)
-		a->brange -= 0.005;
-	if (key == kVK_ANSI_F)
-		a->rz -= 5;
-	if (key == kVK_ANSI_G)
-		a->rz += 5;
-	if (key == kVK_ANSI_H)
-		a->ry -= 5;
-	if (key == kVK_ANSI_J)
-		a->ry += 5;
-	if (key == kVK_ANSI_K)
-		a->rx -= 5;
-	if (key == kVK_ANSI_L)
-		a->rx += 5;
-	if (key == kVK_ANSI_M)
+	else if (key == kVK_ANSI_M)
 	{
 		if (a->menu == 0)
 			a->menu = 1;
@@ -529,9 +553,28 @@ int	keypress(int key, t_allvars *a)
 	return (0);
 }
 
+//for keypresses macOS uses Carbon.HIToolbox.Events.h
+//and in Linux it uses X11's X11/keysymdef.h
+//Note that for example "5" and "ESC"
+//create the same value in X11 or Cocoa
+//So using something like
+//keysym == kVK_Escape || keysym == XK_Escape
+//is not a good idea
+//I did something unconventional here because I didn't want 
+//it to go through all if elses;
+int	keypress(int key, t_allvars *a)
+{
+	if (key == kVK_Escape)
+		quit(a, 0);
+	if (keypress1(key, a) == 0)
+		if (keypress2(key, a) == 0)
+			keypress3(key, a);
+	return (0);
+}
+
 //Returns a linear value in the range [0,1]
 //for sRGB input in [0,255].
-float ChannelInvCompanding(int c)
+float channel_inv_companding(int c)
 {
 	float	y;
 
@@ -548,20 +591,20 @@ float ChannelInvCompanding(int c)
 //Convert color from 0..255 to 0..1
 //Inverse Srgb Companding for 
 //Red, Green, and Blue
-float	*InverseSrgbCompanding(int c)
+float	*inverse_srgb_companding(int c)
 {
 	float	*r;
 
 	r = malloc(4 * sizeof(float));
 	r[0] = (float) get_t(c);
-	r[1] = ChannelInvCompanding(get_r(c));
-	r[2] = ChannelInvCompanding(get_g(c));
-	r[3] = ChannelInvCompanding(get_b(c));
+	r[1] = channel_inv_companding(get_r(c));
+	r[2] = channel_inv_companding(get_g(c));
+	r[3] = channel_inv_companding(get_b(c));
 	return (r);
 }
 
 //Apply companding to Red, Green, and Blue
-float ChannelCompanding(float c)
+float	channel_companding(float c)
 {
 	float	x;
 
@@ -574,7 +617,7 @@ float ChannelCompanding(float c)
 
 //return new color. Convert 0..1 back into 0..255
 //Srgb Companding for Red, Green, and Blue
-int SrgbCompanding(float *c)
+int srgb_companding(float *c)
 {
 	int	t;
 	int	r;
@@ -582,16 +625,16 @@ int SrgbCompanding(float *c)
 	int	b;
 
 	t = (int)c[0];
-	r = (int)(ChannelCompanding(c[1]) * 255);
-	g = (int)(ChannelCompanding(c[2]) * 255);
-	b = (int)(ChannelCompanding(c[3]) * 255);
+	r = (int)(channel_companding(c[1]) * 255);
+	g = (int)(channel_companding(c[2]) * 255);
+	b = (int)(channel_companding(c[3]) * 255);
 	free(c);
 	return (create_trgb(t, r, g, b));
 }
 
 //sums channels
 //does not include transperancy
-float sumChannels(float *c)
+float sum_channels(float *c)
 {
 	float	x;
 
@@ -625,7 +668,7 @@ void	fix(float *c, float intensity, float total)
 	c[3] = (c[3] * intensity / total);
 }
 
-int sign(int x)
+int	sign(int x)
 {
 	if (x > 0)
 		return (1);
@@ -639,18 +682,18 @@ int	calculate_color_step(t_calcol *c, float step)
 {
 	c->intensity = pow(lerp_int(c->bright1, c->bright2, step), (1 / GAMMA));
 	c->color = lerp(c->color1_lin, c->color2_lin, step);
-	c->total = sumChannels(c->color);
+	c->total = sum_channels(c->color);
 	if (c->total != 0)
 		fix(c->color, c->intensity, c->total);
-	return (SrgbCompanding(c->color));
+	return (srgb_companding(c->color));
 }
 
 void 	inverse(t_calcol *c, int scolor, int ecolor)
 {
-	c->color1_lin = InverseSrgbCompanding(scolor);
-	c->bright1 = pow(sumChannels(c->color1_lin), GAMMA);
-	c->color2_lin = InverseSrgbCompanding(ecolor);
-	c->bright2 = pow(sumChannels(c->color2_lin), GAMMA);
+	c->color1_lin = inverse_srgb_companding(scolor);
+	c->bright1 = pow(sum_channels(c->color1_lin), GAMMA);
+	c->color2_lin = inverse_srgb_companding(ecolor);
+	c->bright2 = pow(sum_channels(c->color2_lin), GAMMA);
 }
 
 void	init_bresenhams(t_bresvars *v, t_coord *start, t_coord *end)
@@ -713,8 +756,8 @@ void	bresenhams_alg(t_coord *start, t_coord *end, t_allvars *a)
 
 void	clear_image(t_allvars *a)
 {
-	int k;
-	int l;
+	int	k;
+	int	l;
 
 	k = 0;
 	while (k < IMG_H)
@@ -733,38 +776,73 @@ void	clear_image(t_allvars *a)
 
 void	menu_text(t_allvars *a)
 {
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 50, LTR_C, "W,A,S,D to translate on x & y");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 90, LTR_C, "I for isometric projection");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 110, LTR_C, "O for parallel projection");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 130, LTR_C, "P for perspective projection");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 150, LTR_C, "C for conical projection");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 180, LTR_C, "Z and X for zoom");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 200, LTR_C, "Up and Down to scale z");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 220, LTR_C, "Left and right to scale bending");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 260, LTR_C, "F and G to rotate on z");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 280, LTR_C, "H and J to rotate on y");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 300, LTR_C, "K and L to rotate on x");
-	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr, 20, 320, LTR_C, "M to toggle the menu");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 50, LTR_C, "W,A,S,D to translate on x & y");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 90, LTR_C, "I for isometric projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 110, LTR_C, "O for parallel projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 130, LTR_C, "P for perspective projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 150, LTR_C, "C for conical projection");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 180, LTR_C, "Z and X for zoom");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 200, LTR_C, "Up and Down to scale z");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 220, LTR_C, "Left and right to scale bending");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 260, LTR_C, "F and G to rotate on z");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 280, LTR_C, "H and J to rotate on y");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 300, LTR_C, "K and L to rotate on x");
+	mlx_string_put(a->data.mlx_ptr, a->data.win_ptr,
+		20, 320, LTR_C, "M to toggle the menu");
+}
+
+void put_menu(t_allvars *a)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < IMG_H)
+	{
+		j = 0;
+		while (j < MENU_W)
+		{
+			my_mlx_pixel_put(&a->img, j, i, 0xc3c3c3);
+			j++;
+		}
+		i++;
+	}
 }
 
 void	put_lines(t_allvars *a)
 {
-	for (int k = 0; k < a->ty; k++)
+	int	k;
+	int	l;
+
+	k = 0;
+	while (k < a->ty)
 	{
-		for (int l = 0; l < a->tx; l++)
+		l = 0;
+		while (l < a->tx)
 		{
 			if (l < a->tx - 1)
-				bresenhams_alg(&a->c[k * a->tx + l], &a->c[k * a->tx + l + 1], a);
+				bresenhams_alg(&a->c[k * a->tx + l],
+					&a->c[k * a->tx + l + 1], a);
 			if (k < a->ty -1)
-				bresenhams_alg(&a->c[k * a->tx + l], &a->c[(k + 1 )* a->tx + l], a);
+				bresenhams_alg(&a->c[k * a->tx + l],
+					&a->c[(k + 1) * a->tx + l], a);
+			l++;
 		}
+		k++;
 	}
 	if (a->menu == 1)
-	{
-		for (int i = 0; i < IMG_H; i++)
-			for (int j = 0; j < MENU_W; j++)
-				my_mlx_pixel_put(&a->img, j, i, 0xc3c3c3);
-	}
+		put_menu(a);
 }
 
 int	render(t_allvars *a)
@@ -774,7 +852,8 @@ int	render(t_allvars *a)
 	{
 		clear_image(a);
 		put_lines(a);
-		mlx_put_image_to_window(a->data.mlx_ptr, a->data.win_ptr, a->img.img, 0, 0);
+		mlx_put_image_to_window(a->data.mlx_ptr,
+			a->data.win_ptr, a->img.img, 0, 0);
 		if (a->menu == 1)
 			menu_text(a);
 	}	
@@ -795,7 +874,7 @@ void	delete_arr_arr(char **arr)
 }
 
 /**
- * @brief If inputed j (aka x) is zero it assumes 
+ * @brief If input j (aka x) is zero it assumes 
  * it is the first time running and counts
  * how many strings are in array arr.
  * 
@@ -824,6 +903,7 @@ void	check_items_inline(t_allvars *a, char *line, char **arr, int *j)
 	}
 }
 
+/*
 void	set_identity(t_allvars *a)
 {
 	a->tw.m[0][0] = 1;
@@ -843,13 +923,13 @@ void	set_identity(t_allvars *a)
 	a->tw.m[3][2] = 0;
 	a->tw.m[3][3] = 1;
 }
-
+*/
 void	set_iso_op_matrix(t_pmatrix *wc, t_allvars *al)
 {
 	float	a;
 	float	b;
 	float	g;
-	
+
 	a = (45.0 + al->rz) * (M_PI / 180.0);
 	b = (0.0 + al->ry) * (M_PI / 180.0);
 	g = (35.264 + al->rx) * (M_PI / 180.0);
@@ -876,7 +956,7 @@ void	set_paralel_matrix(t_pmatrix *wc, t_allvars *al)
 	float	a;
 	float	b;
 	float	g;
-	
+
 	a = (0 + al->rz) * (M_PI / 180.0);
 	b = (0 + al->ry) * (M_PI / 180.0);
 	g = (0 + al->rx) * (M_PI / 180.0);
@@ -886,7 +966,7 @@ void	set_paralel_matrix(t_pmatrix *wc, t_allvars *al)
 	wc->m[0][3] = 0;
 	wc->m[1][0] = sin(a) * (-cos(b));
 	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
-	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) - sin(a) * sin(b) * cos(g);
 	wc->m[1][3] = 0;
 	wc->m[2][0] = -al->scale * sin(b);
 	wc->m[2][1] = al->scale * cos(b) * sin(g);
@@ -898,18 +978,12 @@ void	set_paralel_matrix(t_pmatrix *wc, t_allvars *al)
 	wc->m[3][3] = 1;
 }
 
-
-/*
-wc->m[3][0] = cos(b) * (al->tlx * cos(a) + al->tly * sin(a)) - al->tlz * sin(b) ;
-wc->m[3][1] = sin(g) * (sin(b) * (al->tlx * cos(a) + al->tly * sin(a)) + al->tlz * cos(b)) + cos(g) * (al->tly * cos(a) - al->tlx * sin(a));
-wc->m[3][2] = cos(g) * (sin(b) * (al->tlx * cos(a) + al->tly * sin(a)) + al->tlz * cos(b)) - sin(g) * (al->tly * cos(a) - al->tlx * sin(a));
-*/
 void	world_matrix(t_pmatrix *wc, t_allvars *al)
 {	
 	float	a;
 	float	b;
 	float	g;
-	
+
 	a = (0 + al->rz) * (M_PI / 180.0);
 	b = (0 + al->ry) * (M_PI / 180.0);
 	g = (0 + al->rx) * (M_PI / 180.0);
@@ -919,7 +993,7 @@ void	world_matrix(t_pmatrix *wc, t_allvars *al)
 	wc->m[0][3] = 0;
 	wc->m[1][0] = sin(a) * (-cos(b));
 	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
-	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) - sin(a) * sin(b) * cos(g);
 	wc->m[1][3] = 0;
 	wc->m[2][0] = -al->scale * sin(b);
 	wc->m[2][1] = al->scale * cos(b) * sin(g);
@@ -943,7 +1017,6 @@ void	set_projection_matrix(t_pmatrix *pm, t_allvars *a)
 	pm->m[2][3] = -1.0;
 	pm->m[3][3] = 0.0;
 }
-
 
 void	set_ortog_matrix(t_pmatrix *pm, t_allvars *a)
 {
@@ -1061,14 +1134,14 @@ void	set_bb_variables(t_allvars *a, t_point min_camera, t_point max_camera)
 	float	maxy;
 	float	max;
 
-	ar = (float)IMG_W / (float)IMG_H; 
+	ar = (float)IMG_W / (float)IMG_H;
 	maxx = dmax(fabs(min_camera.x), fabs(max_camera.x));
 	maxy = dmax(fabs(min_camera.y), fabs(max_camera.y));
 	max = dmax(maxx, maxy);
 	a->r = (max * ar);
-	a->t = max; 
+	a->t = max;
 	a->l = -(a->r);
-	a->b = -(a->t); 
+	a->b = -(a->t);
 }
 
 void	set_bounding_box_while(t_allvars *a, t_point *min_world,
@@ -1148,7 +1221,7 @@ float	inv_value(float value)
 	else
 		return (0.0);
 }
- 
+
 int	my_sign(float value)
 {
 	if (value < 0.0)
@@ -1157,65 +1230,6 @@ int	my_sign(float value)
 		return (1);
 	else
 		return (0);
-}
-
-void	set_rot_y(t_pmatrix *mat, float ammount_rad)
-{
-	float c;
-	float s;
-
-	s = sin(ammount_rad);
-	c = cos(ammount_rad);
-	mat->m[0][0] = c;
-	mat->m[0][1] = 0;
-	mat->m[0][2] = s;
-	mat->m[0][3] = 0;
-	mat->m[1][0] = 0;
-	mat->m[1][1] = 1;
-	mat->m[1][2] = 0;
-	mat->m[1][3] = 0;
-	mat->m[2][0] = -s;
-	mat->m[2][1] = 0;
-	mat->m[2][2] = c;
-	mat->m[2][3] = 0;
-	mat->m[3][0] = 0;
-	mat->m[3][1] = 0;
-	mat->m[3][2] = 0;
-	mat->m[3][3] = 1;
-}
-
-void	matrix_multiply_4by4(float src1[4][4], float src2[4][4], float dest[4][4])
-{
-	dest[0][0] = src1[0][0] * src2[0][0] + src1[0][1] * src2[1][0] + src1[0][2] * src2[2][0] + src1[0][3] * src2[3][0]; 
-	dest[0][1] = src1[0][0] * src2[0][1] + src1[0][1] * src2[1][1] + src1[0][2] * src2[2][1] + src1[0][3] * src2[3][1]; 
-	dest[0][2] = src1[0][0] * src2[0][2] + src1[0][1] * src2[1][2] + src1[0][2] * src2[2][2] + src1[0][3] * src2[3][2]; 
-	dest[0][3] = src1[0][0] * src2[0][3] + src1[0][1] * src2[1][3] + src1[0][2] * src2[2][3] + src1[0][3] * src2[3][3]; 
-	dest[1][0] = src1[1][0] * src2[0][0] + src1[1][1] * src2[1][0] + src1[1][2] * src2[2][0] + src1[1][3] * src2[3][0]; 
-	dest[1][1] = src1[1][0] * src2[0][1] + src1[1][1] * src2[1][1] + src1[1][2] * src2[2][1] + src1[1][3] * src2[3][1]; 
-	dest[1][2] = src1[1][0] * src2[0][2] + src1[1][1] * src2[1][2] + src1[1][2] * src2[2][2] + src1[1][3] * src2[3][2]; 
-	dest[1][3] = src1[1][0] * src2[0][3] + src1[1][1] * src2[1][3] + src1[1][2] * src2[2][3] + src1[1][3] * src2[3][3]; 
-	dest[2][0] = src1[2][0] * src2[0][0] + src1[2][1] * src2[1][0] + src1[2][2] * src2[2][0] + src1[2][3] * src2[3][0]; 
-	dest[2][1] = src1[2][0] * src2[0][1] + src1[2][1] * src2[1][1] + src1[2][2] * src2[2][1] + src1[2][3] * src2[3][1]; 
-	dest[2][2] = src1[2][0] * src2[0][2] + src1[2][1] * src2[1][2] + src1[2][2] * src2[2][2] + src1[2][3] * src2[3][2]; 
-	dest[2][3] = src1[2][0] * src2[0][3] + src1[2][1] * src2[1][3] + src1[2][2] * src2[2][3] + src1[2][3] * src2[3][3]; 
-	dest[3][0] = src1[3][0] * src2[0][0] + src1[3][1] * src2[1][0] + src1[3][2] * src2[2][0] + src1[3][3] * src2[3][0]; 
-	dest[3][1] = src1[3][0] * src2[0][1] + src1[3][1] * src2[1][1] + src1[3][2] * src2[2][1] + src1[3][3] * src2[3][1]; 
-	dest[3][2] = src1[3][0] * src2[0][2] + src1[3][1] * src2[1][2] + src1[3][2] * src2[2][2] + src1[3][3] * src2[3][2]; 
-	dest[3][3] = src1[3][0] * src2[0][3] + src1[3][1] * src2[1][3] + src1[3][2] * src2[2][3] + src1[3][3] * src2[3][3]; 
-};
-
-void sum_vect(t_point *src1, t_point *src2)
-{
-	src1->x += src2->x;
-	src1->y += src2->y;
-	src1->z += src2->z;
-}
-
-void sub_vect(t_point *src1, t_point *src2)
-{
-	src1->x -= src2->x;
-	src1->y -= src2->y;
-	src1->z -= src2->z;
 }
 
 void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
@@ -1246,7 +1260,6 @@ void	count_file_items(t_allvars *a, char **argv)
 	a->y = 0;
 	while (line != NULL)
 	{
-		ft_printf("%s", line);
 		pos = ft_strchr(line, '\n');
 		*pos = '\0';
 		arr = ft_split(line, ' ');
@@ -1278,26 +1291,76 @@ void	allocate_matrices(t_allvars *a)
 
 int hex2int(char *hex)
 {
-	int val;
-	int byte;
-	
+	int	val;
+	int	byte;
+
 	val = 0;
-	while (*hex) {
+	while (*hex)
+	{
 		byte = *hex++;
 		if (byte == '0' && (*hex == 'x' || *hex == 'X'))
 		{
 			hex++;
-			continue;
+			continue ;
 		}
-		else if (byte >= '0' && byte <= '9') 
+		else if (byte >= '0' && byte <= '9')
 			byte = byte - '0';
-		else if (byte >= 'a' && byte <='f')
+		else if (byte >= 'a' && byte <= 'f')
 			byte = byte - 'a' + 10;
-		else if (byte >= 'A' && byte <='F')
+		else if (byte >= 'A' && byte <= 'F')
 			byte = byte - 'A' + 10;
 		val = (val << 4) | (byte & 0xF);
 	}
 	return (val);
+}
+
+void	get_coordinates_color(char **arr, t_allvars *a)
+{
+	char	**arr2;
+
+	arr2 = ft_split(arr[a->x], ',');
+	a->i[a->y * a->tx + a->x].x = (float)a->x -(a->tx / 2);
+	a->i[a->y * a->tx + a->x].y = (float)a->y -(a->ty / 2);
+	a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr2[0]));
+	a->i[a->y * a->tx + a->x].c = (hex2int(arr2[1]));
+	delete_arr_arr(arr2);
+}
+
+void	get_coordinates(char **arr, t_allvars *a)
+{
+	a->i[a->y * a->tx + a->x].x = (float)a->x - (a->tx / 2);
+	a->i[a->y * a->tx + a->x].y = (float)a->y - (a->ty / 2);
+	a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr[a->x]));
+	if (a->i[a->y * a->tx + a->x].z >= 10)
+		a->i[a->y * a->tx + a->x].c = 0xf3b03d;
+	else if (a->i[a->y * a->tx + a->x].z <= -10)
+		a->i[a->y * a->tx + a->x].c = 0xffffff;
+	else
+		a->i[a->y * a->tx + a->x].c = 0x9A1F6A;
+}
+
+void	get_z_val_while(char **arr, t_allvars *a)
+{
+	char	*pos2;
+
+	a->x = 0;
+	while (a->x < a->tx)
+	{
+		pos2 = ft_strchr(arr[a->x], ',');
+		if (pos2)
+			get_coordinates_color(arr, a);
+		else
+			get_coordinates(arr, a);
+		a->x++;
+	}
+}
+
+void	get_z_val_alocate(t_allvars *a)
+{
+	a->tx = a->x;
+	a->ty = a->y;
+	a->y = 0;
+	allocate_matrices(a);
 }
 
 void	get_z_values(t_allvars *a, char **argv)
@@ -1310,47 +1373,14 @@ void	get_z_values(t_allvars *a, char **argv)
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0)
 		quit(a, 2);
-
-	a->tx = a->x;
-	a->ty = a->y;
-	a->y = 0;
-	//input vector array
-	allocate_matrices(a);
+	get_z_val_alocate(a);
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
-		ft_printf("%s", line);
 		pos = ft_strchr(line, '\n');
 		*pos = '\0';
 		arr = ft_split(line, ' ');
-		a->x = 0;
-		while (a->x < a->tx)
-		{
-			char	*pos2 = ft_strchr(arr[a->x], ',');
-			char	**arr2;
-			if (pos2)
-			{
-				arr2 = ft_split(arr[a->x], ',');
-				a->i[a->y * a->tx + a->x].x = (float)a->x -(a->tx/2);
-				a->i[a->y * a->tx + a->x].y = (float)a->y -(a->ty/2);
-				a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr2[0]));
-				a->i[a->y * a->tx + a->x].c = (hex2int(arr2[1]));
-				delete_arr_arr(arr2);
-			}
-			else
-			{
-				a->i[a->y * a->tx + a->x].x = (float)a->x -(a->tx/2);
-				a->i[a->y * a->tx + a->x].y = (float)a->y -(a->ty/2);
-				a->i[a->y * a->tx + a->x].z = (float)(ft_atoi(arr[a->x]));
-				if (a->i[a->y * a->tx + a->x].z >= 10)
-					a->i[a->y * a->tx + a->x].c = 0xf3b03d;
-				else if (a->i[a->y * a->tx + a->x].z <= -10)
-					a->i[a->y * a->tx + a->x].c = 0xffffff;
-				else
-					a->i[a->y * a->tx + a->x].c = 0x9A1F6A;
-			}
-			a->x++;
-		}
+		get_z_val_while(arr, a);
 		delete_arr_arr(arr);
 		free(line);
 		line = NULL;
@@ -1376,90 +1406,113 @@ void	set_matrices(t_allvars *a)
 	else if (a->mode == 'p')
 		set_projection_matrix(&a->pm, a);
 }
+void	make_matrix_mode_c(int k, int l, t_allvars *a)
+{
+	bend_it(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], a);
+	transform_matrix_vector(&a->bt[k * a->tx + l], &a->wc);
+	multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+}
 
-void	make_matrix(t_allvars *a)
+void	make_matrix_mode_iop(int k, int l, t_allvars *a)
+{
+	multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
+	multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+}
+
+void	make_matrix_assignment(int k, int l, t_allvars *a)
 {
 	int	xp;
 	int	yp;
-	
-	set_matrices(a);
-	for (int k = 0; k < a->ty; k++)
+
+	if (a->mode != 'i' || a->mode != 'o')
 	{
-		for (int l = 0; l < a->tx; l++)
+		xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W);
+		yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
+	}
+	else
+	{
+		xp = (int)(a->o[k * a->tx + l].x);
+		yp = (int)(a->o[k * a->tx + l].y);
+	}
+	a->c[k * a->tx + l].x = xp;
+	a->c[k * a->tx + l].y = yp;
+	a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
+}
+
+void	make_matrix(t_allvars *a)
+{
+	int	k;
+	int	l;
+
+	set_matrices(a);
+	k = 0;
+	while (k < a->ty)
+	{	
+		l = 0;
+		while (l < a->tx)
 		{
 			if (a->mode == 'c')
-			{
-				bend_it(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], a);
-				transform_matrix_vector(&a->bt[k * a->tx + l], &a->wc);
-				multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
-			}
+				make_matrix_mode_c(k, l, a);
 			else
-			multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
-			multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
-			if (a->mode != 'i' || a->mode != 'o')
-			{
-				xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W); 
-				yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
-			}
-			else
-			{
-				xp = (int)(a->o[k * a->tx + l].x); 
-				yp = (int)(a->o[k * a->tx + l].y);
-			}
-			a->c[k * a->tx + l].x = xp;
-			a->c[k * a->tx + l].y = yp;
-			a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
+				make_matrix_mode_iop(k, l, a);
+			make_matrix_assignment(k, l, a);
+			l++;
 		}
+		k++;
 	}
+}
+
+//initialize server and check
+//create new window and check; free mlx pointer on error
+//create new image
+//get image parameters info
+void	initialize_window(t_allvars *a)
+{
+	t_data		data;
+	t_img		img;
+
+	data.mlx_ptr = mlx_init();
+	if (data.mlx_ptr == NULL)
+		quit(a, 8);
+	data.win_ptr = mlx_new_window(data.mlx_ptr, IMG_W, IMG_H, "FdF");
+	if (data.win_ptr == NULL)
+		quit(a, 9);
+	img.img = mlx_new_image(data.mlx_ptr, IMG_W, IMG_H);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
+			&img.endian);
+	a->data = data;
+	a->img = img;
+}
+
+void	initialize_a(t_allvars *a)
+{
+	a->pm = (t_pmatrix){0};
+	a->wc = (t_pmatrix){0};
+	a->tw = (t_pmatrix){0};
+	a->fov = 90;
+	a->n = 0.05;
+	a->f = 100;
+	a->brange = 0.015;
+	get_z_offset(a);
+	a->scale = 1;
+	a->zoom = 1;
+	a->mode = 'i';
+	a->menu = 1;
 }
 
 int	main(int argc, char **argv)
 {
 	t_allvars	a;
-	t_data		data;
-	t_img		img;
 
 	a = (t_allvars){0};
-	//open file
 	if (argc != 2)
 		quit(&a, 1);
 	count_file_items(&a, argv);
 	get_z_values(&a, argv);
-
-	//initialize server and check
-	data.mlx_ptr = mlx_init();
-	if (data.mlx_ptr == NULL)
-		exit(MLX_ERROR);
-	//create new window and check; free mlx pointer on error
-	data.win_ptr = mlx_new_window(data.mlx_ptr, IMG_W, IMG_H, "FdF");
-	if (data.win_ptr == NULL)
-		exit(WIN_ERROR);
-	//create new image
-	img.img = mlx_new_image(data.mlx_ptr, IMG_W, IMG_H);
-	//get image parameters info
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-			&img.endian);
-	
-	a.data = data;
-	a.img = img;
-	a.pm = (t_pmatrix){0};
-	a.wc = (t_pmatrix){0};
-	a.tw = (t_pmatrix){0};
-	a.fov = 90; 
-	a.n = 0.05; 
-	a.f = 100;
-	a.brange = 0.015;
-	get_z_offset(&a);
-	a.scale = 1;
-	a.zoom = 1;
-	a.mode = 'i';
-	
-
-	mlx_loop_hook(data.mlx_ptr, render, &a);
-	mlx_key_hook(data.win_ptr, keypress, &a);
-	//close program on close window
-	mlx_hook(data.win_ptr, 17, 0, quit, &a);
-
-	mlx_loop(data.mlx_ptr);
-	//close window and free server
+	initialize_window(&a);
+	initialize_a(&a);
+	mlx_loop_hook(a.data.mlx_ptr, render, &a);
+	mlx_key_hook(a.data.win_ptr, keypress, &a);
+	mlx_hook(a.data.win_ptr, 17, 0, quit, &a);
+	mlx_loop(a.data.mlx_ptr);
 }

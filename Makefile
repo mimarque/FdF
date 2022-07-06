@@ -18,7 +18,7 @@ COMPATIBILITY=-lX11 -lXext
 
 FRAMEWORK=-framework OpenGL -framework AppKit
 
-APP=test.c
+APP=FdF.c
 
 all: $(LIBFT) app
 
