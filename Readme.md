@@ -13,15 +13,23 @@ This project is about representing a landscape as a 3D object in which all surfa
 
 Version: 2
 
-#wireframe #projection #fdf #fdf42
+###### #wireframe #projection #fdf #fdf42 #conic #conic_projection #world_bending #42 #School42
 
   
 
 <br/>
 
   
+## 2. Preview
 
-## 2. Resources
+![conical projection](https://imgur.com/xG2HHhZ.png)
+
+![isometric projection](https://imgur.com/8MzbZmb.png)
+
+![with the menu](https://imgur.com/nCxHupl.png)
+
+
+## 3. Resources
 
 
 ### Understanding MinilibX:
@@ -104,7 +112,7 @@ Step by step (without matrices):
 
 [42Guide](https://tangible-harbor-c59.notion.site/FT_Cursus-98f688bd250a4601b6e55ac699d17cb0)
 
-## 3. Explanation:
+## 4. Explanation:
 
 I decided to use matrices to put things on the screen because I knew I would have better support,
 more resources and that the bonus would use them.
@@ -126,15 +134,15 @@ World transform Matrix I used:
 
 ```
 
-┏                                                                                        ┓
-┃  cos(a)cos(b)   cos(a)sin(b)sin(g)-sin(a)cos(g)   cos(a)sin(b)cos(g)+sin(a)sin(g)   0  ┃
-┃                                                                                        ┃
-┃  sin(a)cos(b)   sin(a)sin(b)sin(g)+cos(a)cos(g)   sin(a)sin(b)cos(g)-cos(a)sin(g)   0  ┃
-┃                                                                                        ┃
-┃    - S sin(b)           S cos(b)sin(g)                    S cos(b)cos(g)            0  ┃
-┃                                                                                        ┃
-┃       0                        0                                  0                 1  ┃
-┗                                                                                        ┛
+┏                                                                                             ┓
+┃  cos(a)cos(b)      cos(a)sin(b)sin(g)-sin(a)cos(g)    cos(a)sin(b)cos(g)+sin(a)sin(g)    0  ┃
+┃                                                                                             ┃
+┃  sin(a)(-cos(b))   -sin(a)sin(b)sin(g)-cos(a)cos(g)   cos(a)sin(g)-sin(a)sinb(b)cos(g)   0  ┃
+┃                                                                                             ┃
+┃    - S sin(b)               S cos(b)sin(g)                    S cos(b)cos(g)             0  ┃
+┃                                                                                             ┃
+┃         0                          0                                  0                  1  ┃
+┗                                                                                             ┛
 
 ```
 
@@ -144,7 +152,46 @@ and `S` is the scaling of `z`.
 
 It comes from multiplying z scaling matrix with R(z) R(y) R(x) rotation matrices:
 
-![image](https://imgur.com/MObrHOy.png)
+[Matrix multiplication](https://www.wolframalpha.com/input?i2d=true&i=%7B%7B1%2C0%2C0%2C0%7D%2C%7B0%2C-1%2C0%2C0%7D%2C%7B0%2C0%2Cs%2C0%7D%2C%7B0%2C0%2C0%2C1%7D%7D%7B%7Bcos%5C%2840%29a%5C%2841%29%2C-sin%5C%2840%29a%5C%2841%29%2C0%2C0%7D%2C%7Bsin%5C%2840%29a%5C%2841%29%2Ccos%5C%2840%29a%5C%2841%29%2C0%2C0%7D%2C%7B0%2C0%2C1%2C0%7D%2C%7B0%2C0%2C0%2C1%7D%7D%7B%7Bcos%5C%2840%29b%5C%2841%29%2C0%2Csin%5C%2840%29b%5C%2841%29%2C0%7D%2C%7B0%2C1%2C0%2C0%7D%2C%7B-sin%5C%2840%29b%5C%2841%29%2C0%2Ccos%5C%2840%29b%5C%2841%29%2C0%7D%2C%7B0%2C0%2C0%2C1%7D%7D%7B%7B1%2C0%2C0%2C0%7D%2C%7B0%2Ccos%5C%2840%29g%5C%2841%29%2C-sin%5C%2840%29g%5C%2841%29%2C0%7D%2C%7B0%2Csin%5C%2840%29g%5C%2841%29%2Ccos%5C%2840%29g%5C%2841%29%2C0%7D%2C%7B0%2C0%2C0%2C1%7D%7D)
   
+Note that I inverted y on the first matrix. You might not need to do that. Changing that value yields a completely different matrix.
 
 For Isometric projection angles see: https://en.wikipedia.org/wiki/Isometric_projection#Overview
+
+### Conic projection
+---
+
+That is the biggest throw off of the entire pdf assignment. 
+
+You can't imagine how long I spent looking. There is no conic projection. I mean, there is, but... it only applies to spheres being projected onto a plane.
+
+This is a diagram of the available projections:
+
+
+
+
+![list of Graphical projections](https://imgur.com/dUiuB4O.png)
+
+
+So when you do an isometric projection by matrices you are automatically doing the bonus parallel projection
+
+
+To achieve what I like to call "world bending" or this: 
+
+
+![world bending](https://imgur.com/kyEFF8X.png)
+
+
+You first should read the links on resources to understand better what is happening. However my implementation didn't use matrices like [this example](https://stackoverflow.com/questions/51596272/warp-curve-all-vertices-around-a-pivot-point-axis-three-js-glsl) does. I just transformed the `z` coordinates.
+
+
+```
+x = abs((int)inputpoint.x);
+
+//range should be between 0.015 and 0.005
+vv = (x * x) * (range);
+outpt.x = inputpoint.x;
+outpt.y = inputpoint.y;
+outpt.z = inputpoint.z + vv;
+```
+

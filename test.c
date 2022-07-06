@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 17:08:24 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 00:02:11 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/06 01:37:15 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -859,7 +859,7 @@ void	set_iso_op_matrix(t_pmatrix *wc, t_allvars *al)
 	wc->m[0][3] = 0;
 	wc->m[1][0] = sin(a) * (-cos(b));
 	wc->m[1][1] = -sin(a) * sin(b) * sin(g) - cos(a) * cos(g);
-	wc->m[1][2] = cos(a) * sin(g) * - sin(a) * sin(b) * cos(g);
+	wc->m[1][2] = cos(a) * sin(g) - sin(a) * sin(b) * cos(g);
 	wc->m[1][3] = 0;
 	wc->m[2][0] = -al->scale * sin(b);
 	wc->m[2][1] = al->scale * cos(b) * sin(g);
@@ -1216,24 +1216,6 @@ void sub_vect(t_point *src1, t_point *src2)
 	src1->x -= src2->x;
 	src1->y -= src2->y;
 	src1->z -= src2->z;
-}
-
-void	bend_it2(t_point *mvPos, t_allvars *a)
-{
-	float		curveAmount;
-	float		invRange;
-	float		amountToApplyCurve;
-	t_point		point;
-	t_pmatrix	rmat;
-
-	curveAmount = a->brange / a->tx/4;
-	invRange = inv_value(a->brange);
-
-	amountToApplyCurve = clamp(mvPos->z * invRange, 0.0, 1.0);
-	set_rot_y(&rmat, curveAmount * amountToApplyCurve * my_sign(mvPos->x));
-	point = (t_point){0, 0, -a->brange * amountToApplyCurve, 0};
-	sum_vect(mvPos, &point);
-	transform_matrix_vector(mvPos, &rmat);
 }
 
 void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
