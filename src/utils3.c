@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:46:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:47:40 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/08 01:49:01 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 //since mlx_pixel_put works slowly but fast enough to cause tearing
 //we make our own function to put data in the image unidimetional array
@@ -50,4 +50,5 @@ void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
 	outpt->x = inpt->x;
 	outpt->y = inpt->y;
 	outpt->z = inpt->z + vv;
+	outpt->c = inpt->c;
 }

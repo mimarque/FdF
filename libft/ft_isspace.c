@@ -6,9 +6,17 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 14:54:59 by mimarque          #+#    #+#             */
-/*   Updated: 2022/06/29 14:55:52 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 23:45:26 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
+static int	ft_isspace(int c)
+{
+	return ((c == ' ' || c == '\f' || c == '\n' || c == '\r' || c == '\t'
+			|| c == '\v'));
+}
+*/
 
 int	ft_isspace(int c)
 {

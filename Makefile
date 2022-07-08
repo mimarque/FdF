@@ -1,8 +1,6 @@
 CC=gcc
 
-CFLAGS=-Wall -Wextra -Werror
-
-OBJ_DIR=obj
+CFLAGS=-Wall -Wextra -Werror -g
 
 MLX=mlx/libmlx_Darwin.a
 
@@ -18,7 +16,17 @@ COMPATIBILITY=-lX11 -lXext
 
 FRAMEWORK=-framework OpenGL -framework AppKit
 
-APP=FdF.c
+HDR=-Iinclude
+
+LIBHDR=-Ilibft -Imlx
+
+SRC_DIR=src/
+
+SRCS:=$(wildcard $(SRC_DIR)*.c)
+
+OBJ_DIR=obj/
+
+OBJS=$(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
 all: $(LIBFT) app
 
@@ -28,17 +36,20 @@ $(LIBFT):
 
 $(OBJ_DIR):
 	mkdir $@
+ 
+$(OBJS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(HDR) $(LIBHDR) -c $< -o $@ 
 
-app:
+app: $(OBJS)
 	@echo "making app"
-	$(CC) $(CFLAGS) $(LIB) $(APP) $(FRAMEWORK) -o FdF
+	$(CC) $(CFLAGS) $(LIB) $(FRAMEWORK) $(OBJS) -o FdF
 
 clean:
+	rm -rf obj
 	make -C libft $@
 
 fclean: clean
-	rm server
-	rm client
+	rm ./FdF
 	make -C libft $@
 
 re: fclean all

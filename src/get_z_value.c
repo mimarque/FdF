@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:23:23 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:23:26 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:14:38 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	get_coordinates_color(char **arr, t_allvars *a)
 {

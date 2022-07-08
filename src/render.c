@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:51:03 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 15:56:42 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:15:47 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	clear_image(t_allvars *a)
 {

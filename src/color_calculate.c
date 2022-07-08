@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:57:06 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 05:01:04 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:13:31 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 int	calculate_color_step(t_calcol *c, float step)
 {

@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:38:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:40:07 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:16:01 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 int	my_sign(float value)
 {

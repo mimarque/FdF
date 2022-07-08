@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:51:50 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 04:53:24 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:13:50 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 //sums channels
 //does not include transperancy

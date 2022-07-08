@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:43:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:43:35 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:14:35 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 /**
  * @brief If input j (aka x) is zero it assumes 

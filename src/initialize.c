@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:27:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:27:35 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/08 01:40:45 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	initialize_a(t_allvars *a)
 {
@@ -28,6 +28,13 @@ void	initialize_a(t_allvars *a)
 	a->menu = 1;
 }
 
+/*
+	Unnecessary, removed a->o because it added 
+	more overhead memory and delay to the program
+	a->o = malloc(sizeof(t_point) * (a->tx * a->ty));
+	if (!a->o)
+		quit(a, 6);
+*/
 void	allocate_matrices(t_allvars *a)
 {
 	a->i = malloc(sizeof(t_point) * (a->tx * a->ty));
@@ -36,9 +43,6 @@ void	allocate_matrices(t_allvars *a)
 	a->bt = malloc(sizeof(t_point) * (a->tx * a->ty));
 	if (!a->bt)
 		quit(a, 5);
-	a->o = malloc(sizeof(t_point) * (a->tx * a->ty));
-	if (!a->o)
-		quit(a, 6);
 	a->c = malloc(sizeof(t_coord) * (a->tx * a->ty));
 	if (!a->c)
 		quit(a, 7);

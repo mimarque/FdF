@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:46:24 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 04:46:50 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:13:40 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 //Returns a linear value in the range [0,1]
 //for sRGB input in [0,255].

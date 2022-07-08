@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:06:00 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:09:17 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/07 22:12:53 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	set_bb_variables(t_allvars *a, t_point min_camera, t_point max_camera)
 {

@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:34:47 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 04:37:53 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/08 01:42:06 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	quit1(t_allvars *a, int error)
 {
@@ -41,21 +41,18 @@ void	quit2(t_allvars *a, int error)
 	{
 		free(a->i);
 		free(a->bt);
-		free(a->o);
 		ft_printf("Error allocating memory");
 	}
 	else if (error == 8)
 	{
 		free(a->i);
 		free(a->bt);
-		free(a->o);
 		free(a->c);
 	}
 	else if (error == 9)
 	{
 		free(a->i);
 		free(a->bt);
-		free(a->o);
 		free(a->c);
 		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
 	}
@@ -78,7 +75,6 @@ int	quit(t_allvars *a, int error)
 	{
 		free(a->i);
 		free(a->bt);
-		free(a->o);
 		free(a->c);
 		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
 		free(a->data.mlx_ptr);

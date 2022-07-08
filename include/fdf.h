@@ -6,18 +6,18 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:19:22 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:47:36 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/08 01:46:16 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FDF_H
 # include <stdio.h>
-# include <math.h>
-# include <libft.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <mlx.h>
+# include <math.h>
+# include "libft.h"
+# include "mlx.h"
 
 # define FDF_H
 
@@ -301,11 +301,15 @@ typedef struct s_coord
 	int	c;
 }	t_coord;
 
+//C is not OOP or C++... 
+//so, many things I want to do in this program
+//are limited by norminette and my lack of time
+//thus this mosnstrosity is born
+//always passed by reference and not by copy
 typedef struct s_allvars
 {
 	t_point		*i;
 	t_point		*bt;
-	t_point		*o;
 	t_coord		*c;
 	t_pmatrix	pm;
 	t_pmatrix	wc;

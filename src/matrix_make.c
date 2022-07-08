@@ -6,11 +6,11 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:17:28 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/06 16:20:12 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/08 01:37:55 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fdf.h>
+#include "fdf.h"
 
 void	set_matrices(t_allvars *a)
 {
@@ -29,17 +29,19 @@ void	set_matrices(t_allvars *a)
 		set_projection_matrix(&a->pm, a);
 }
 
+//multiply_matrix_vector(&a->bt[k * a->tx + l], &a->bt[k * a->tx + l], &a->pm);
 void	make_matrix_mode_c(int k, int l, t_allvars *a)
 {
 	bend_it(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], a);
 	transform_matrix_vector(&a->bt[k * a->tx + l], &a->wc);
-	multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+	transform_matrix_vector(&a->bt[k * a->tx + l], &a->pm);
 }
 
+//multiply_matrix_vector(&a->bt[k * a->tx + l], &a->bt[k * a->tx + l], &a->pm);
 void	make_matrix_mode_iop(int k, int l, t_allvars *a)
 {
 	multiply_matrix_vector(&a->i[k * a->tx + l], &a->bt[k * a->tx + l], &a->wc);
-	multiply_matrix_vector(&a->bt[k * a->tx + l], &a->o[k * a->tx + l], &a->pm);
+	transform_matrix_vector(&a->bt[k * a->tx + l], &a->pm);
 }
 
 void	make_matrix_assignment(int k, int l, t_allvars *a)
@@ -49,17 +51,17 @@ void	make_matrix_assignment(int k, int l, t_allvars *a)
 
 	if (a->mode != 'i' || a->mode != 'o')
 	{
-		xp = (int)((a->o[k * a->tx + l].x + 1) * 0.5 * IMG_W);
-		yp = (int)((1 - (a->o[k * a->tx + l].y + 1) * 0.5) * IMG_H);
+		xp = (int)((a->bt[k * a->tx + l].x + 1) * 0.5 * IMG_W);
+		yp = (int)((1 - (a->bt[k * a->tx + l].y + 1) * 0.5) * IMG_H);
 	}
 	else
 	{
-		xp = (int)(a->o[k * a->tx + l].x);
-		yp = (int)(a->o[k * a->tx + l].y);
+		xp = (int)(a->bt[k * a->tx + l].x);
+		yp = (int)(a->bt[k * a->tx + l].y);
 	}
 	a->c[k * a->tx + l].x = xp;
 	a->c[k * a->tx + l].y = yp;
-	a->c[k * a->tx + l].c = a->o[k * a->tx + l].c;
+	a->c[k * a->tx + l].c = a->bt[k * a->tx + l].c;
 }
 
 void	make_matrix(t_allvars *a)
