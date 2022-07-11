@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:19:22 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/08 01:46:16 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/11 15:01:02 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -425,6 +425,8 @@ void	get_z_offset(t_allvars *a);
 void	get_xyz_offset(t_allvars *a);
 //utils3.c
 void	my_mlx_pixel_put(t_img *img, int x, int y, int color);
+bool	check(int k, int l, t_allvars *al);
+bool	is_visible(t_coord *c);
 void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:46:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/08 01:49:01 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:50:10 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,34 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 			i -= 8;
 		}
 	}
+}
+
+bool	check(int k, int l, t_allvars *al)
+{	
+	bool	a;
+	bool	b;
+	bool	c;
+	bool	d;
+	bool	e;
+
+	e = is_visible(&al->c[k * al->tx + l]);
+	k = (int)clamp(k, 2, al->ty - 2);
+	l = (int)clamp(l, 2, al->tx - 2);
+	a = is_visible(&al->c[k * al->tx + l - 2]);
+	b = is_visible(&al->c[(k - 2) * al->tx + l]);
+	c = is_visible(&al->c[k * al->tx + l + 2]);
+	d = is_visible(&al->c[(k + 2) * al->tx + l]);
+	if (((a || b) || (c || d)) || e)
+		return (1);
+	return (0);
+}
+
+bool	is_visible(t_coord *c)
+{
+	if ((c->x > IMG_W || c->x < 0)
+		|| (c->y > IMG_H || c->y < 0))
+		return (0);
+	return (1);
 }
 
 void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)

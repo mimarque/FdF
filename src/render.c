@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 15:51:03 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/07 22:15:47 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/07/11 14:57:40 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,10 @@ void	put_lines(t_allvars *a)
 		l = 0;
 		while (l < a->tx)
 		{
-			if (l < a->tx - 1)
+			if (l < a->tx - 1 && check(k, l, a))
 				bresenhams_alg(&a->c[k * a->tx + l],
 					&a->c[k * a->tx + l + 1], a);
-			if (k < a->ty -1)
+			if (k < a->ty - 1 && check(k, l, a))
 				bresenhams_alg(&a->c[k * a->tx + l],
 					&a->c[(k + 1) * a->tx + l], a);
 			l++;
