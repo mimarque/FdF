@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:19:22 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/11 15:01:02 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/08/19 23:29:12 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@
 # define BUFFER_SIZE 42
 # define NUM_OF_FD 256
 
+# ifndef MAC_K
+#  define MAC_K
 /*
 ** # define KEYPRESSMASK (1L<<0)
 ** # define KEYRELEASEMASK (1L<<1)
@@ -241,6 +243,226 @@ enum {
 	kVK_JIS_Eisu					= 0x66,
 	kVK_JIS_Kana					= 0x68
 };
+# endif
+
+# ifndef LX_K
+#  define LX_K
+
+#  define XK_BACKSPACE                     0xff08  /* Back space, back char */
+#  define XK_TAB                           0xff09
+#  define XK_LINEFEED                      0xff0a  /* Linefeed, LF */
+#  define XK_CLEAR                         0xff0b
+#  define XK_RETURN                        0xff0d  /* Return, enter */
+#  define XK_PAUSE                         0xff13  /* Pause, hold */
+#  define XK_SCROLL_LOCK                   0xff14
+#  define XK_SYS_REQ                       0xff15
+#  define XK_ESCAPE                        0xff1b
+#  define XK_DELETE                        0xffff  /* Delete, rubout */
+
+#  define XK_HOME                          0xff50
+#  define XK_LEFT                          0xff51  /* Move left, left arrow */
+#  define XK_UP                            0xff52  /* Move up, up arrow */
+#  define XK_RIGHT                         0xff53  /* Move right, right arrow */
+#  define XK_DOWN                          0xff54  /* Move down, down arrow */
+#  define XK_PRIOR                         0xff55  /* Prior, previous */
+#  define XK_PAGE_UP                       0xff55
+#  define XK_NEXT                          0xff56  /* Next */
+#  define XK_PAGE_DOWN                     0xff56
+#  define XK_END                           0xff57  /* EOL */
+#  define XK_BEGIN                         0xff58  /* BOL */
+
+#  define XK_KP_SPACE                      0xff80  /* Space */
+#  define XK_KP_TAB                        0xff89
+#  define XK_KP_ENTER                      0xff8d  /* Enter */
+#  define XK_KP_F1                         0xff91  /* PF1, KP_A, ... */
+#  define XK_KP_F2                         0xff92
+#  define XK_KP_F3                         0xff93
+#  define XK_KP_F4                         0xff94
+#  define XK_KP_HOME                       0xff95
+#  define XK_KP_LEFT                       0xff96
+#  define XK_KP_UP                         0xff97
+#  define XK_KP_RIGHT                      0xff98
+#  define XK_KP_DOWN                       0xff99
+#  define XK_KP_PRIOR                      0xff9a
+#  define XK_KP_PAGE_UP                    0xff9a
+#  define XK_KP_NEXT                       0xff9b
+#  define XK_KP_PAGE_DOWN                  0xff9b
+#  define XK_KP_END                        0xff9c
+#  define XK_KP_BEGIN                      0xff9d
+#  define XK_KP_INSERT                     0xff9e
+#  define XK_KP_DELETE                     0xff9f
+
+#  define XK_KP_0                          0xffb0
+#  define XK_KP_1                          0xffb1
+#  define XK_KP_2                          0xffb2
+#  define XK_KP_3                          0xffb3
+#  define XK_KP_4                          0xffb4
+#  define XK_KP_5                          0xffb5
+#  define XK_KP_6                          0xffb6
+#  define XK_KP_7                          0xffb7
+#  define XK_KP_8                          0xffb8
+#  define XK_KP_9                          0xffb9
+
+#  define XK_F1                            0xffbe
+#  define XK_F2                            0xffbf
+#  define XK_F3                            0xffc0
+#  define XK_F4                            0xffc1
+#  define XK_F5                            0xffc2
+#  define XK_F6                            0xffc3
+#  define XK_F7                            0xffc4
+#  define XK_F8                            0xffc5
+#  define XK_F9                            0xffc6
+#  define XK_F10                           0xffc7
+#  define XK_F11                           0xffc8
+#  define XK_L1                            0xffc8
+#  define XK_F12                           0xffc9
+#  define XK_L2                            0xffc9
+#  define XK_F13                           0xffca
+#  define XK_L3                            0xffca
+#  define XK_F14                           0xffcb
+#  define XK_L4                            0xffcb
+#  define XK_F15                           0xffcc
+#  define XK_L5                            0xffcc
+#  define XK_F16                           0xffcd
+#  define XK_L6                            0xffcd
+#  define XK_F17                           0xffce
+#  define XK_L7                            0xffce
+#  define XK_F18                           0xffcf
+#  define XK_L8                            0xffcf
+#  define XK_F19                           0xffd0
+#  define XK_L9                            0xffd0
+#  define XK_F20                           0xffd1
+#  define XK_L10                           0xffd1
+#  define XK_F21                           0xffd2
+#  define XK_R1                            0xffd2
+#  define XK_F22                           0xffd3
+#  define XK_R2                            0xffd3
+#  define XK_F23                           0xffd4
+#  define XK_R3                            0xffd4
+#  define XK_F24                           0xffd5
+#  define XK_R4                            0xffd5
+#  define XK_F25                           0xffd6
+#  define XK_R5                            0xffd6
+#  define XK_F26                           0xffd7
+#  define XK_R6                            0xffd7
+#  define XK_F27                           0xffd8
+#  define XK_R7                            0xffd8
+#  define XK_F28                           0xffd9
+#  define XK_R8                            0xffd9
+#  define XK_F29                           0xffda
+#  define XK_R9                            0xffda
+#  define XK_F30                           0xffdb
+#  define XK_R10                           0xffdb
+#  define XK_F31                           0xffdc
+#  define XK_R11                           0xffdc
+#  define XK_F32                           0xffdd
+#  define XK_R12                           0xffdd
+#  define XK_F33                           0xffde
+#  define XK_R13                           0xffde
+#  define XK_F34                           0xffdf
+#  define XK_R14                           0xffdf
+#  define XK_F35                           0xffe0
+#  define XK_R15                           0xffe0
+
+#  define XK_SPACE                         0x0020  /* U+0020 SPACE */
+#  define XK_EXCLAM                        0x0021  /* U+0021 EXCLAMATION MARK */
+#  define XK_QUOTEDBL                      0x0022  /* U+0022 QUOTATION MARK */
+#  define XK_NUMBERSIGN                    0x0023  /* U+0023 NUMBER SIGN */
+#  define XK_DOLLAR                        0x0024  /* U+0024 DOLLAR SIGN */
+#  define XK_PERCENT                       0x0025  /* U+0025 PERCENT SIGN */
+#  define XK_AMPERSAND                     0x0026  /* U+0026 AMPERSAND */
+#  define XK_APOSTROPHE                    0x0027  /* U+0027 APOSTROPHE */
+#  define XK_QUOTERIGHT                    0x0027  /* deprecated */
+#  define XK_PARENLEFT                     0x0028  /* U+0028 LEFT PARENTHESIS */
+#  define XK_PARENRIGHT                    0x0029  /* U+0029 R PARENTHESIS */
+#  define XK_ASTERISK                      0x002a  /* U+002A ASTERISK */
+#  define XK_PLUS                          0x002b  /* U+002B PLUS SIGN */
+#  define XK_COMMA                         0x002c  /* U+002C COMMA */
+#  define XK_MINUS                         0x002d  /* U+002D HYPHEN-MINUS */
+#  define XK_PERIOD                        0x002e  /* U+002E FULL STOP */
+#  define XK_SLASH                         0x002f  /* U+002F SOLIDUS */
+#  define XK_0                             0x0030  /* U+0030 DIGIT ZERO */
+#  define XK_1                             0x0031  /* U+0031 DIGIT ONE */
+#  define XK_2                             0x0032  /* U+0032 DIGIT TWO */
+#  define XK_3                             0x0033  /* U+0033 DIGIT THREE */
+#  define XK_4                             0x0034  /* U+0034 DIGIT FOUR */
+#  define XK_5                             0x0035  /* U+0035 DIGIT FIVE */
+#  define XK_6                             0x0036  /* U+0036 DIGIT SIX */
+#  define XK_7                             0x0037  /* U+0037 DIGIT SEVEN */
+#  define XK_8                             0x0038  /* U+0038 DIGIT EIGHT */
+#  define XK_9                             0x0039  /* U+0039 DIGIT NINE */
+#  define XK_COLON                         0x003a  /* U+003A COLON */
+#  define XK_SEMICOLON                     0x003b  /* U+003B SEMICOLON */
+#  define XK_LESS                          0x003c  /* U+003C LESS-THAN SIGN */
+#  define XK_EQUAL                         0x003d  /* U+003D EQUALS SIGN */
+#  define XK_GREATER                       0x003e  /* U+003E GREATER-THAN */
+#  define XK_QUESTION                      0x003f  /* U+003F QUESTION MARK */
+#  define XK_AT                            0x0040  /* U+0040 COMMERCIAL AT */
+#  define XK_A                             0x0041  /* U+0041 CAPITAL LETTER A */
+#  define XK_B                             0x0042  /* U+0042 CAPITAL LETTER B */
+#  define XK_C                             0x0043  /* U+0043 CAPITAL LETTER C */
+#  define XK_D                             0x0044  /* U+0044 CAPITAL LETTER D */
+#  define XK_E                             0x0045  /* U+0045 CAPITAL LETTER E */
+#  define XK_F                             0x0046  /* U+0046 CAPITAL LETTER F */
+#  define XK_G                             0x0047  /* U+0047 CAPITAL LETTER G */
+#  define XK_H                             0x0048  /* U+0048 CAPITAL LETTER H */
+#  define XK_I                             0x0049  /* U+0049 CAPITAL LETTER I */
+#  define XK_J                             0x004a  /* U+004A CAPITAL LETTER J */
+#  define XK_K                             0x004b  /* U+004B CAPITAL LETTER K */
+#  define XK_L                             0x004c  /* U+004C CAPITAL LETTER L */
+#  define XK_M                             0x004d  /* U+004D CAPITAL LETTER M */
+#  define XK_N                             0x004e  /* U+004E CAPITAL LETTER N */
+#  define XK_O                             0x004f  /* U+004F CAPITAL LETTER O */
+#  define XK_P                             0x0050  /* U+0050 CAPITAL LETTER P */
+#  define XK_Q                             0x0051  /* U+0051 CAPITAL LETTER Q */
+#  define XK_R                             0x0052  /* U+0052 CAPITAL LETTER R */
+#  define XK_S                             0x0053  /* U+0053 CAPITAL LETTER S */
+#  define XK_T                             0x0054  /* U+0054 CAPITAL LETTER T */
+#  define XK_U                             0x0055  /* U+0055 CAPITAL LETTER U */
+#  define XK_V                             0x0056  /* U+0056 CAPITAL LETTER V */
+#  define XK_W                             0x0057  /* U+0057 CAPITAL LETTER W */
+#  define XK_X                             0x0058  /* U+0058 CAPITAL LETTER X */
+#  define XK_Y                             0x0059  /* U+0059 CAPITAL LETTER Y */
+#  define XK_Z                             0x005a  /* U+005A CAPITAL LETTER Z */
+#  define XK_BRACKETLEFT                   0x005b  /* U+005B L SQUARE BRACKET */
+#  define XK_BACKSLASH                     0x005c  /* U+005C REVERSE SOLIDUS */
+#  define XK_BRACKETRIGHT                  0x005d  /* U+005D R SQUARE BRACKET */
+#  define XK_ASCIICIRCUM                   0x005e  /* U+005E CIRCUMFLEX */
+#  define XK_UNDERSCORE                    0x005f  /* U+005F LOW LINE */
+#  define XK_GRAVE                         0x0060  /* U+0060 GRAVE ACCENT */
+#  define XK_QUOTELEFT                     0x0060  /* deprecated */
+#  define XK_S_A                           0x0061  /* U+0061 SMALL LETTER A */
+#  define XK_S_B                           0x0062  /* U+0062 SMALL LETTER B */
+#  define XK_S_C                           0x0063  /* U+0063 SMALL LETTER C */
+#  define XK_S_D                           0x0064  /* U+0064 SMALL LETTER D */
+#  define XK_S_E                           0x0065  /* U+0065 SMALL LETTER E */
+#  define XK_S_F                           0x0066  /* U+0066 SMALL LETTER F */
+#  define XK_S_G                           0x0067  /* U+0067 SMALL LETTER G */
+#  define XK_S_H                           0x0068  /* U+0068 SMALL LETTER H */
+#  define XK_S_I                           0x0069  /* U+0069 SMALL LETTER I */
+#  define XK_S_J                           0x006a  /* U+006A SMALL LETTER J */
+#  define XK_S_K                           0x006b  /* U+006B SMALL LETTER K */
+#  define XK_S_L                           0x006c  /* U+006C SMALL LETTER L */
+#  define XK_S_M                           0x006d  /* U+006D SMALL LETTER M */
+#  define XK_S_N                           0x006e  /* U+006E SMALL LETTER N */
+#  define XK_S_O                           0x006f  /* U+006F SMALL LETTER O */
+#  define XK_S_P                           0x0070  /* U+0070 SMALL LETTER P */
+#  define XK_S_Q                           0x0071  /* U+0071 SMALL LETTER Q */
+#  define XK_S_R                           0x0072  /* U+0072 SMALL LETTER R */
+#  define XK_S_S                           0x0073  /* U+0073 SMALL LETTER S */
+#  define XK_S_T                           0x0074  /* U+0074 SMALL LETTER T */
+#  define XK_S_U                           0x0075  /* U+0075 SMALL LETTER U */
+#  define XK_S_V                           0x0076  /* U+0076 SMALL LETTER V */
+#  define XK_S_W                           0x0077  /* U+0077 SMALL LETTER W */
+#  define XK_S_X                           0x0078  /* U+0078 SMALL LETTER X */
+#  define XK_S_Y                           0x0079  /* U+0079 SMALL LETTER Y */
+#  define XK_S_Z                           0x007a  /* U+007A SMALL LETTER Z */
+#  define XK_BRACELEFT                     0x007b  /* U+007B L CURLY BRACKET */
+#  define XK_BAR                           0x007c  /* U+007C VERTICAL LINE */
+#  define XK_BRACERIGHT                    0x007d  /* U+007D R CURLY BRACKET */
+#  define XK_ASCIITILDE                    0x007e  /* U+007E TILDE */
+
+# endif
 
 typedef struct s_img {
 	void	*img;
