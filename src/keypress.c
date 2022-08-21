@@ -14,26 +14,26 @@
 
 int	keypress1(int key, t_allvars *a)
 {
-	if (key == XK_I)
+	if (key == XK_S_I)
 		a->mode = 'i';
-	else if (key == XK_O)
+	else if (key == XK_S_O)
 		a->mode = 'o';
-	else if (key == XK_P)
+	else if (key == XK_S_P)
 		a->mode = 'p';
-	else if (key == XK_C)
+	else if (key == XK_S_C)
 	{
 		if (a->mode == 'p')
 			a->mode = 'c';
 		else
 			a->mode = 'p';
 	}
-	else if (key == XK_A)
+	else if (key == XK_S_A)
 		a->tlx -= 1;
-	else if (key == XK_D)
+	else if (key == XK_S_D)
 		a->tlx += 1;
-	else if (key == XK_S)
+	else if (key == XK_S_S)
 		a->tly -= 1;
-	else if (key == XK_W)
+	else if (key == XK_S_W)
 		a->tly += 1;
 	else
 		return (0);
@@ -50,17 +50,17 @@ int	keypress2(int key, t_allvars *a)
 		a->brange += 0.005;
 	else if (key == XK_RIGHT)
 		a->brange -= 0.005;
-	else if (key == XK_F)
+	else if (key == XK_S_F)
 		a->rz -= 5;
-	else if (key == XK_G)
+	else if (key == XK_S_G)
 		a->rz += 5;
-	else if (key == XK_H)
+	else if (key == XK_S_H)
 		a->ry -= 5;
-	else if (key == XK_J)
+	else if (key == XK_S_J)
 		a->ry += 5;
-	else if (key == XK_K)
+	else if (key == XK_S_K)
 		a->rx -= 5;
-	else if (key == XK_L)
+	else if (key == XK_S_L)
 		a->rx += 5;
 	else
 		return (0);
@@ -69,21 +69,21 @@ int	keypress2(int key, t_allvars *a)
 
 int	keypress3(int key, t_allvars *a)
 {
-	if (key == XK_Z)
+	if (key == XK_S_Z)
 	{
 		if (a->mode != 'p')
 			a->zoom += 0.5;
 		else
 			a->fov -= 10;
 	}
-	else if (key == XK_X)
+	else if (key == XK_S_X)
 	{
 		if (a->mode != 'p')
 			a->zoom -= 0.5;
 		else
 			a->fov += 10;
 	}
-	else if (key == XK_M)
+	else if (key == XK_S_M)
 	{
 		if (a->menu == 0)
 			a->menu = 1;

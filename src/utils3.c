@@ -40,6 +40,7 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	}
 }
 
+//invalid read
 bool	check(int k, int l, t_allvars *al)
 {	
 	bool	a;

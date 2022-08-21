@@ -2,7 +2,7 @@ CC=gcc
 
 CFLAGS=-Wall -Wextra -Werror
 
-MLX=mlx/libmlx_Darwin.a
+MLX=mlx/libmlx_Linux.a
 
 LIBFT=libft/libft.a
 
@@ -12,7 +12,7 @@ I_LIBMLX=-Imlx -Lmlx -lmlx
 
 LIB=$(I_LIBFT) $(I_LIBMLX)
 
-COMPATIBILITY=-lX11 -lXext
+COMPATIBILITY=-lX11 -lXext -lm
 
 FRAMEWORK=-framework OpenGL -framework AppKit
 
@@ -42,7 +42,7 @@ $(OBJS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(OBJ_DIR)
 
 app: $(OBJS)
 	@echo "making app"
-	$(CC) $(CFLAGS) $(LIB) $(FRAMEWORK) $(OBJS) -o FdF
+	$(CC) $(CFLAGS) $(OBJS) $(HDR) $(LIBHDR) $(LIB) $(COMPATIBILITY) -o FdF
 
 clean:
 	rm -rf obj

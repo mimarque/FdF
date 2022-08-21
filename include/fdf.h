@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef FDF_H
+# define FDF_H
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -18,8 +19,6 @@
 # include <math.h>
 # include "libft.h"
 # include "mlx.h"
-
-# define FDF_H
 
 # define KEYPRESS 2
 # define KEYRELEASE 3
