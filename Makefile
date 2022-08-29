@@ -1,3 +1,5 @@
+vpath %.c /src
+
 CC=gcc
 
 CFLAGS=-Wall -Wextra -Werror
@@ -6,29 +8,33 @@ MLX=mlx/libmlx_Linux.a
 
 LIBFT=libft/libft.a
 
+HDR=-Iinclude
+
 I_LIBFT=-Ilibft -Llibft -lft
 
 I_LIBMLX=-Imlx -Lmlx -lmlx
 
-LIB=$(I_LIBFT) $(I_LIBMLX)
+LIB=$(I_LIBFT) $(I_LIBMLX) -lm
+
+NAME=FdF
 
 COMPATIBILITY=-lX11 -lXext -lm
 
 FRAMEWORK=-framework OpenGL -framework AppKit
 
-HDR=-Iinclude
+SRC_DIR:=src
 
-LIBHDR=-Ilibft -Imlx
+OBJ_DIR:=obj
 
-SRC_DIR=src/
+SRCS:=$(wildcard $(SRC_DIR)/*.c)
 
-SRCS:=$(wildcard $(SRC_DIR)*.c)
+OBJS:=$(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
-OBJ_DIR=obj/
+all: $(NAME)
 
-OBJS=$(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
-
-all: $(LIBFT) app
+$(NAME): $(OBJS)
+	@echo "making app"
+	$(CC) $(CFLAGS) $(OBJS) $(HDR) $(LIB) $(COMPATIBILITY) -o $@ 
 
 $(LIBFT):
 	make -C libft
@@ -37,20 +43,17 @@ $(LIBFT):
 $(OBJ_DIR):
 	mkdir $@
  
-$(OBJS): $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(HDR) $(LIBHDR) -c $< -o $@ 
-
-app: $(OBJS)
-	@echo "making app"
-	$(CC) $(CFLAGS) $(OBJS) $(HDR) $(LIBHDR) $(LIB) $(COMPATIBILITY) -o FdF
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR) $(LIBFT)
+	@echo "making objects"
+	$(CC) $(CFLAGS) $(HDR) $(LIB) $(COMPATIBILITY) -c $< -o $@ 
 
 clean:
 	rm -rf obj
 	make -C libft $@
 
 fclean: clean
-	rm ./FdF
 	make -C libft $@
+	rm ./FdF
 
 re: fclean all
 
