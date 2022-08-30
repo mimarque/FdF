@@ -89,10 +89,10 @@ void	put_lines(t_allvars *a)
 		l = 0;
 		while (l < a->tx)
 		{
-			if (l < a->tx - 1 && check(k, l, a))
+			if (l < a->tx - 1)
 				bresenhams_alg(&a->c[k * a->tx + l],
 					&a->c[k * a->tx + l + 1], a);
-			if (k < a->ty - 1 && check(k, l, a))
+			if (k < a->ty - 1)
 				bresenhams_alg(&a->c[k * a->tx + l],
 					&a->c[(k + 1) * a->tx + l], a);
 			l++;

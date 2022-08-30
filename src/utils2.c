@@ -67,7 +67,7 @@ void	get_z_offset(t_allvars *a)
 
 	max_world = (t_point){-__FLT_MAX__, -__FLT_MAX__, -__FLT_MAX__, 0};
 	i = 0;
-	while (i++ < (a->tx * a->ty))
+	while (i++ < (a->tx * a->ty) - 1)
 		if (a->i[i].z > max_world.z)
 			max_world.z = a->i[i].z;
 	a->tlz = -(max_world.z + 1);

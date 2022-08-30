@@ -54,7 +54,8 @@ void	quit2(t_allvars *a, int error)
 		free(a->i);
 		free(a->bt);
 		free(a->c);
-		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
+		mlx_destroy_window(a->data.mlx_ptr,a->data.win_ptr);
+		mlx_destroy_display(a->data.mlx_ptr);
 	}
 }
 
@@ -76,7 +77,9 @@ int	quit(t_allvars *a, int error)
 		free(a->i);
 		free(a->bt);
 		free(a->c);
-		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
+		mlx_destroy_image(a->data.mlx_ptr, a->img.img);
+		mlx_destroy_window(a->data.mlx_ptr,a->data.win_ptr);
+		mlx_destroy_display(a->data.mlx_ptr);
 		free(a->data.mlx_ptr);
 	}
 	exit(error);
