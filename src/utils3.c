@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:46:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/11 16:50:10 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/08/30 17:57:32 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,10 @@ void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
 
 char	*get_filext(char *filename)
 {
-    char *dot = strrchr(filename, '.');
-    if(!dot || dot == filename)
+	char	*dot;
+
+	dot = strrchr(filename, '.');
+	if (!dot || dot == filename)
 		return (NULL);
-    return (dot + 1);
+	return (dot + 1);
 }
