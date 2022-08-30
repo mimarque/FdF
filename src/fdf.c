@@ -12,13 +12,6 @@
 
 #include "fdf.h"
 
-char	*get_filext(char *filename) {
-    char *dot = strrchr(filename, '.');
-    if(!dot || dot == filename)
-		return (NULL);
-    return (dot + 1);
-}
-
 int	main(int argc, char **argv)
 {
 	t_allvars	a;
