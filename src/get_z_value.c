@@ -76,7 +76,8 @@ void	get_z_values(t_allvars *a, char **argv)
 	while (line != NULL)
 	{
 		pos = ft_strchr(line, '\n');
-		*pos = '\0';
+		if(pos != NULL)
+			*pos = '\0';
 		arr = ft_split(line, ' ');
 		get_z_val_while(arr, a);
 		delete_arr_arr(arr);

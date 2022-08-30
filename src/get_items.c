@@ -59,7 +59,8 @@ void	count_file_items(t_allvars *a, char **argv)
 	while (line != NULL)
 	{
 		pos = ft_strchr(line, '\n');
-		*pos = '\0';
+		if(pos != NULL)
+			*pos = '\0';
 		arr = ft_split(line, ' ');
 		check_items_inline(a, line, arr, &a->x);
 		delete_arr_arr(arr);
