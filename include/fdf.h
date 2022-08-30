@@ -649,5 +649,6 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color);
 bool	check(int k, int l, t_allvars *al);
 bool	is_visible(t_coord *c);
 void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a);
+char	*get_filext(char *filename);
 
 #endif
