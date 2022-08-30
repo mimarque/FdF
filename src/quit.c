@@ -15,23 +15,23 @@
 void	quit1(t_allvars *a, int error)
 {
 	if (error == 1)
-		ft_printf("Wrong arguments.\nusage: ./FdF <map.fdf>");
+		ft_printf("Wrong arguments.\nusage: ./FdF <map.fdf>\n");
 	else if (error == 2)
-		ft_printf("Error opening file or wrong file ext");
+		ft_printf("Error opening file or wrong file ext\n");
 	else if (error == 3)
-		ft_printf("Error file improperly formated");
+		ft_printf("Error file improperly formated\n");
 	else if (error == 4)
-		ft_printf("Error allocating memory");
+		ft_printf("Error allocating memory\n");
 	else if (error == 5)
 	{
 		free(a->i);
-		ft_printf("Error allocating memory");
+		ft_printf("Error allocating memory\n");
 	}
 	else if (error == 6)
 	{
 		free(a->i);
 		free(a->bt);
-		ft_printf("Error allocating memory");
+		ft_printf("Error allocating memory\n");
 	}
 }
 
@@ -41,7 +41,7 @@ void	quit2(t_allvars *a, int error)
 	{
 		free(a->i);
 		free(a->bt);
-		ft_printf("Error allocating memory");
+		ft_printf("Error allocating memory\n");
 	}
 	else if (error == 8)
 	{

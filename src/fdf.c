@@ -21,6 +21,8 @@ int	main(int argc, char **argv)
 	if (argc != 2)
 		quit(&a, 1);
 	c = get_filext(argv[1]);
+	if (c == NULL)
+		quit(&a, 2);
 	if (ft_strncmp("fdf", c, 3) != 0)
 		quit(&a, 2);
 	count_file_items(&a, argv);
