@@ -17,7 +17,7 @@ void	quit1(t_allvars *a, int error)
 	if (error == 1)
 		ft_printf("Wrong arguments.\nusage: ./FdF <map.fdf>");
 	else if (error == 2)
-		ft_printf("Error opening file");
+		ft_printf("Error opening file or wrong file ext");
 	else if (error == 3)
 		ft_printf("Error file improperly formated");
 	else if (error == 4)

@@ -81,3 +81,10 @@ void	bend_it(t_point *inpt, t_point *outpt, t_allvars *a)
 	outpt->z = inpt->z + vv;
 	outpt->c = inpt->c;
 }
+
+char	*get_filext(char *filename) {
+    char *dot = strrchr(filename, '.');
+    if(!dot || dot == filename)
+		return (NULL);
+    return (dot + 1);
+}

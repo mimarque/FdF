@@ -12,13 +12,24 @@
 
 #include "fdf.h"
 
+char	*get_filext(char *filename) {
+    char *dot = strrchr(filename, '.');
+    if(!dot || dot == filename)
+		return (NULL);
+    return (dot + 1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_allvars	a;
+	char		*c;
 
 	a = (t_allvars){0};
 	if (argc != 2)
 		quit(&a, 1);
+	c = get_filext(argv[1]);
+	if (ft_strncmp("fdf", c, 3) != 0)
+		quit(&a, 2);
 	count_file_items(&a, argv);
 	get_z_values(&a, argv);
 	initialize_window(&a);
