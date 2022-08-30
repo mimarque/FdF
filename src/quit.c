@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 04:34:47 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/08 01:42:06 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:28:47 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	quit2(t_allvars *a, int error)
 		free(a->i);
 		free(a->bt);
 		free(a->c);
-		mlx_destroy_window(a->data.mlx_ptr,a->data.win_ptr);
+		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
 		mlx_destroy_display(a->data.mlx_ptr);
 	}
 }
@@ -78,7 +78,7 @@ int	quit(t_allvars *a, int error)
 		free(a->bt);
 		free(a->c);
 		mlx_destroy_image(a->data.mlx_ptr, a->img.img);
-		mlx_destroy_window(a->data.mlx_ptr,a->data.win_ptr);
+		mlx_destroy_window(a->data.mlx_ptr, a->data.win_ptr);
 		mlx_destroy_display(a->data.mlx_ptr);
 		free(a->data.mlx_ptr);
 	}

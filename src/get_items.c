@@ -6,7 +6,7 @@
 /*   By: mimarque <mimarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 16:43:27 by mimarque          #+#    #+#             */
-/*   Updated: 2022/07/07 22:14:35 by mimarque         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:29:20 by mimarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	count_file_items(t_allvars *a, char **argv)
 	while (line != NULL)
 	{
 		pos = ft_strchr(line, '\n');
-		if(pos != NULL)
+		if (pos != NULL)
 			*pos = '\0';
 		arr = ft_split(line, ' ');
 		check_items_inline(a, line, arr, &a->x);
